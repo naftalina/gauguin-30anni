@@ -1,0 +1,6 @@
+/* Font self-hosted (GDPR: nessuna chiamata a Google) — subset latin */
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-400.woff2) format('woff2');}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/spectral-400.woff2) format('woff2');}
+@font-face{font-family:'Spectral';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/spectral-400-italic.woff2) format('woff2');}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/spectral-600.woff2) format('woff2');}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/spectral-700.woff2) format('woff2');}
