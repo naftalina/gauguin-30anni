@@ -171,6 +171,8 @@ class GX30_Template {
         <div class="gx-eyebrow"><?php echo esc_html($s('topbar_right')); ?></div>
     </div>
 
+    <div class="gx-redzone">
+
     <div class="gx-hero">
         <div class="gx-cloud-head">I ricordi dei nostri clienti</div>
         <div class="gx-cloud" id="gx-cloud" aria-hidden="true"></div>
@@ -224,6 +226,8 @@ class GX30_Template {
             </form>
         </div>
     </div>
+
+    </div><!-- /gx-redzone -->
 
     <?php $gallery = GX30_Settings::get('gallery', []); if (is_array($gallery) && !empty($gallery)): ?>
     <div class="gx-gallery" id="gx-gallery">

@@ -20,11 +20,10 @@ body.gx30-body{margin:0;background:var(--bordeaux);font-family:'Spectral',serif;
 .gx-topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 7vw;background:var(--bordeaux-dd);border-bottom:1px solid rgba(255,255,255,.16);}
 .gx-eyebrow{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--pink);}
 
+/* Hero + muro ricordi condividono UN solo gradiente continuo: nessun confine visibile. */
+.gx-redzone{background:linear-gradient(180deg,var(--bordeaux-2) 0%,var(--bordeaux) 48%,var(--bordeaux) 100%);}
 .gx-hero{position:relative;overflow:hidden;min-height:780px;padding:64px 7vw 80px;text-align:center;
-  background:
-    radial-gradient(125% 85% at 50% 0%, rgba(255,255,255,.10) 0%, transparent 55%),
-    radial-gradient(80% 120% at 8% 92%, rgba(0,0,0,.22) 0%, transparent 48%),
-    linear-gradient(180deg,var(--bordeaux-2) 0%,var(--bordeaux) 70%,var(--bordeaux) 100%);}
+  background:radial-gradient(125% 85% at 50% 0%, rgba(255,255,255,.10) 0%, transparent 55%);}
 .gx-cloud{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
 .gx-cloud-head{display:none;} /* etichetta visibile solo su mobile */
 .gx-note{position:absolute;width:clamp(160px,15vw,215px);border-radius:14px;padding:17px 19px;
@@ -70,7 +69,7 @@ body.gx30-body{margin:0;background:var(--bordeaux);font-family:'Spectral',serif;
 /* su mobile la galleria è nascosta */
 @media (max-width:600px){.gx-gallery{display:none !important;}}
 
-.gx-memories{padding:96px 7vw;background:var(--bordeaux);}
+.gx-memories{padding:96px 7vw;background:transparent;}
 .gx-memories-inner{max-width:760px;margin:0 auto;text-align:center;}
 .gx-mem-kicker{font-size:13px;letter-spacing:.42em;text-transform:uppercase;color:var(--pink-2);margin-bottom:20px;}
 .gx-memories h2{font-family:'Anton',sans-serif;font-weight:400;font-size:50px;line-height:1.04;letter-spacing:.01em;margin:0 0 18px;color:#fff;}
