@@ -3,7 +3,7 @@
  * Plugin Name: Gauguin 30 Anni
  * Plugin URI: https://gauguin.it
  * Description: Landing page del 30° anniversario Gauguin (1996—2026): countdown, "muro dei ricordi" e form, completamente modificabile dall'admin.
- * Version: 1.12.1
+ * Version: 1.12.2
  * Author: Gauguin
  * Text Domain: gauguin-30anni
  * Requires PHP: 7.4
@@ -11,24 +11,21 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('GX30_VERSION', '1.12.1');
+define('GX30_VERSION', '1.12.2');
 define('GX30_FILE', __FILE__);
 define('GX30_DIR', plugin_dir_path(__FILE__));
 define('GX30_URL', plugin_dir_url(__FILE__));
 define('GX30_TEMPLATE_SLUG', 'gauguin-30anni'); // valore salvato in _wp_page_template
 
-// Auto-update via GitHub (Plugin Update Checker) — repo privato, modalita' tag-only.
-// Riusa lo stesso PAT salvato dal plugin "Gauguin Ordering" (wp_option gauguin_github_token).
+// Auto-update via GitHub (Plugin Update Checker) — repo PUBBLICO, modalita' tag-only.
+// Repo pubblico: nessun token necessario (inviarne uno non valido per questo repo
+// farebbe rispondere a GitHub "401 Bad credentials" e bloccherebbe il controllo).
 require_once GX30_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
 $gx30UpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
     'https://github.com/naftalina/gauguin-30anni/',
     __FILE__,
     'gauguin-30anni'
 );
-$gx30_github_token = get_option('gauguin_github_token', '');
-if (!empty($gx30_github_token)) {
-    $gx30UpdateChecker->setAuthentication($gx30_github_token);
-}
 
 require_once GX30_DIR . 'includes/class-settings.php';
 require_once GX30_DIR . 'includes/class-memories.php';
