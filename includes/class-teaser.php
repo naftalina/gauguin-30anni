@@ -23,10 +23,9 @@ class GX30_Teaser {
     public function enqueue() {
         if (is_admin() || !is_front_page()) return;
 
-        // Se la home coincide con la landing 30 Anni, il muro + form sono gia'
-        // in pagina: niente popup, sarebbe un doppione.
-        $id = get_queried_object_id();
-        if ($id && get_post_meta($id, '_wp_page_template', true) === GX30_TEMPLATE_SLUG) return;
+        // Mostrato in home. NB: da gauguin.it la home E' la landing 30 Anni,
+        // e il popup deve comparire proprio li' (salta subito all'occhio,
+        // mentre il muro dei ricordi e' piu' in basso nella pagina).
 
         wp_enqueue_style('gx30-fonts', GX30_URL . 'public/assets/fonts.css', [], GX30_VERSION);
         wp_enqueue_style('gx30-teaser', GX30_URL . 'public/assets/teaser.css', ['gx30-fonts'], GX30_VERSION);
