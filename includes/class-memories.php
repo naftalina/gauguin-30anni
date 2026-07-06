@@ -161,8 +161,16 @@ class GX30_Memories {
         $body  = "Hai ricevuto un nuovo ricordo dal sito:\n\n";
         $body .= "Da: $name\n\n";
         $body .= "« $memory »\n\n";
+
+        // Immagine pronta per i social (quadrato + storia), se il server può generarla.
+        $attachments = GX30_Card::make_attachments($name, $memory);
+        if (!empty($attachments)) {
+            $body .= "In allegato trovi l'immagine già pronta da pubblicare su Instagram/Facebook (formato quadrato e storia).\n\n";
+        }
         $body .= "— Lo trovi anche in WordPress → Gauguin 30 Anni → Ricordi ricevuti.";
-        wp_mail($to, $subject, $body);
+
+        wp_mail($to, $subject, $body, '', $attachments);
+        GX30_Card::cleanup($attachments);
     }
 
     /**
