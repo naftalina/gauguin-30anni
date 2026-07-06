@@ -78,6 +78,37 @@ class GX30_Memories {
             'callback'            => [$this, 'handle_submit'],
             'permission_callback' => '__return_true', // pubblico; protetto da nonce + honeypot
         ]);
+
+        // Un ricordo pubblicato a caso, per il popup teaser in home.
+        // GET pubblico e non cachato dal full-page cache: cambia ad ogni visita.
+        register_rest_route('gauguin30/v1', '/ricordo-casuale', [
+            'methods'             => 'GET',
+            'callback'            => [$this, 'handle_random'],
+            'permission_callback' => '__return_true',
+        ]);
+    }
+
+    /**
+     * Ritorna un ricordo pubblicato scelto a caso. Se non ce ne sono ancora,
+     * ripiega su uno dei bigliettini iniziali (seeds) cosi' il popup ha
+     * comunque qualcosa da mostrare. 204 se non c'e' proprio nulla.
+     */
+    public function handle_random() {
+        global $wpdb;
+        $table = self::table();
+        $row = $wpdb->get_row("SELECT name, memory FROM $table WHERE published = 1 ORDER BY RAND() LIMIT 1");
+        if ($row) {
+            return new WP_REST_Response(['name' => (string) $row->name, 'memory' => (string) $row->memory], 200);
+        }
+        $seeds = GX30_Settings::get('seeds', []);
+        if (is_array($seeds) && $seeds) {
+            $s = $seeds[array_rand($seeds)];
+            return new WP_REST_Response([
+                'name'   => isset($s['name']) ? (string) $s['name'] : '',
+                'memory' => isset($s['memory']) ? (string) $s['memory'] : '',
+            ], 200);
+        }
+        return new WP_REST_Response(null, 204);
     }
 
     /**

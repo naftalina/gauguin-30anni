@@ -27,6 +27,29 @@ class GX30_Template {
         return $templates;
     }
 
+    /**
+     * URL della pagina che usa il template "Gauguin 30 Anni" (per i link
+     * esterni, es. il popup teaser). Fallback: home. Cache 6h in transient.
+     */
+    public static function landing_url() {
+        $cached = get_transient('gx30_landing_url');
+        if ($cached !== false) return $cached;
+
+        $ids = get_posts([
+            'post_type'        => 'page',
+            'post_status'      => 'publish',
+            'posts_per_page'   => 1,
+            'fields'           => 'ids',
+            'no_found_rows'    => true,
+            'meta_key'         => '_wp_page_template',
+            'meta_value'       => GX30_TEMPLATE_SLUG,
+        ]);
+        $url = !empty($ids) ? get_permalink($ids[0]) : home_url('/');
+
+        set_transient('gx30_landing_url', $url, 6 * HOUR_IN_SECONDS);
+        return $url;
+    }
+
     private function page_uses_template() {
         if (!is_page()) return false;
         $id = get_queried_object_id();

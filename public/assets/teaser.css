@@ -1,0 +1,66 @@
+/* Gauguin 30 Anni — popup teaser "muro dei ricordi" (solo home) */
+.gx30t{
+  position:fixed;
+  z-index:99998;
+  left:12px; right:12px; bottom:12px;
+  background:#F7EDDD;
+  color:#3A1318;
+  border-radius:14px;
+  border:1px solid rgba(158,21,42,.16);
+  border-top:4px solid #9E152A;
+  padding:20px 22px 18px;
+  box-shadow:0 18px 46px rgba(0,0,0,.32);
+  font-family:'Spectral',serif;
+  transform:translateY(140%);
+  opacity:0;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s ease;
+}
+.gx30t.is-in{ transform:none; opacity:1; }
+
+.gx30t-x{
+  position:absolute; top:6px; right:8px;
+  width:34px; height:34px;
+  background:none; border:0; cursor:pointer;
+  font-size:26px; line-height:1;
+  color:#9E152A; opacity:.5;
+  border-radius:8px;
+}
+.gx30t-x:hover{ opacity:1; }
+
+.gx30t-kicker{
+  font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+  font-weight:600; color:#9E152A;
+  margin:0 30px 10px 0;
+}
+.gx30t-quote{
+  margin:0 0 10px;
+  font-style:italic; font-size:17px; line-height:1.5;
+  color:#3A1318;
+}
+.gx30t-name{
+  font-family:'Anton',sans-serif;
+  font-size:13px; letter-spacing:.08em; text-transform:uppercase;
+  color:#553034;
+  margin-bottom:16px;
+}
+.gx30t-name:empty{ display:none; }
+
+.gx30t-cta{
+  display:inline-block;
+  background:#9E152A; color:#fff !important; text-decoration:none;
+  font-family:'Anton',sans-serif;
+  font-size:14px; letter-spacing:.06em; text-transform:uppercase;
+  padding:12px 20px; border-radius:8px;
+  transition:background .2s ease, transform .2s ease;
+}
+.gx30t-cta:hover{ background:#7C0F20; transform:translateY(-1px); }
+
+/* Desktop: card compatta in basso a sinistra */
+@media (min-width:640px){
+  .gx30t{ left:24px; right:auto; bottom:24px; width:360px; padding:24px 26px 22px; }
+  .gx30t-quote{ font-size:18px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .gx30t{ transition:opacity .3s ease; transform:none; }
+}
