@@ -1,0 +1,50 @@
+/* Gauguin 30 Anni — generatore immagini social (admin) */
+.gx30-soc-modal{
+  position:fixed; inset:0; z-index:100000;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+.gx30-soc-modal[hidden]{ display:none; }
+.gx30-soc-backdrop{
+  position:absolute; inset:0;
+  background:rgba(20,6,10,.6);
+}
+.gx30-soc-dialog{
+  position:relative;
+  background:#fff; border-radius:10px;
+  padding:20px 22px 22px;
+  max-width:92vw; max-height:92vh;
+  overflow:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,.4);
+  text-align:center;
+}
+.gx30-soc-close{
+  position:absolute; top:6px; right:10px;
+  background:none; border:0; cursor:pointer;
+  font-size:28px; line-height:1; color:#666;
+}
+.gx30-soc-close:hover{ color:#000; }
+
+.gx30-soc-formats{
+  display:flex; gap:8px; justify-content:center;
+  margin:4px 0 16px;
+}
+.gx30-soc-fmt.is-active{
+  background:#9E152A; border-color:#9E152A; color:#fff;
+}
+
+.gx30-soc-stage{
+  display:flex; justify-content:center; align-items:center;
+  background:#f3f3f3; border-radius:8px; padding:14px;
+  min-height:120px;
+}
+#gx30-soc-canvas{
+  display:block;
+  height:min(60vh,520px); width:auto; max-width:100%;
+  border-radius:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+.gx30-soc-hint{ color:#666; font-size:12px; margin:12px 0 14px; }
+.gx30-soc-actions{ margin-top:4px; }
+
+.gx30-soc-open .dashicons{ vertical-align:middle; }

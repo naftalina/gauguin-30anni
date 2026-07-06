@@ -34,6 +34,24 @@ class GX30_Admin {
     public function assets($hook) {
         if (strpos((string) $hook, self::SLUG) === false) return;
         wp_enqueue_media();
+
+        // Generatore immagini social: solo nella pagina "Ricordi ricevuti".
+        if (strpos((string) $hook, self::SLUG . '-ricordi') !== false) {
+            wp_enqueue_style('gx30-social', GX30_URL . 'public/assets/admin-social.css', [], GX30_VERSION);
+            wp_enqueue_script('gx30-social', GX30_URL . 'public/assets/admin-social.js', [], GX30_VERSION, true);
+            $host = preg_replace('/^www\./', '', (string) wp_parse_url(home_url(), PHP_URL_HOST));
+            wp_localize_script('gx30-social', 'GX30SOC', [
+                'fonts' => [
+                    'anton'          => GX30_URL . 'public/assets/fonts/anton-400.woff2',
+                    'spectral'       => GX30_URL . 'public/assets/fonts/spectral-400.woff2',
+                    'spectralItalic' => GX30_URL . 'public/assets/fonts/spectral-400-italic.woff2',
+                    'spectralBold'   => GX30_URL . 'public/assets/fonts/spectral-600.woff2',
+                ],
+                'lockup' => GX30_Settings::lockup_url(),
+                'invito' => 'Raccontaci anche il tuo ricordo',
+                'host'   => $host ? $host : 'gauguin.it',
+            ]);
+        }
     }
 
     /* ---------------- Impostazioni ---------------- */
@@ -318,7 +336,7 @@ class GX30_Admin {
             <?php else: ?>
             <p class="description">“Pubblica” fa comparire il ricordo nel muro che svolazza nella testata della landing.</p>
             <table class="widefat striped" style="margin-top:12px;">
-                <thead><tr><th style="width:130px;">Data</th><th style="width:150px;">Nome</th><th>Ricordo</th><th style="width:170px;">Pubblicazione</th></tr></thead>
+                <thead><tr><th style="width:130px;">Data</th><th style="width:150px;">Nome</th><th>Ricordo</th><th style="width:170px;">Pubblicazione</th><th style="width:160px;">Immagine social</th></tr></thead>
                 <tbody>
                 <?php foreach ($rows as $r): ?>
                     <tr>
@@ -340,10 +358,33 @@ class GX30_Admin {
                                 <?php endif; ?>
                             </form>
                         </td>
+                        <td>
+                            <button type="button" class="button button-small gx30-soc-open"
+                                data-name="<?php echo esc_attr($r->name); ?>"
+                                data-memory="<?php echo esc_attr($r->memory); ?>">📷 Crea immagine</button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <div id="gx30-soc-modal" class="gx30-soc-modal" hidden>
+                <div class="gx30-soc-backdrop"></div>
+                <div class="gx30-soc-dialog" role="dialog" aria-modal="true" aria-label="Immagine social del ricordo">
+                    <button type="button" class="gx30-soc-close" aria-label="Chiudi">&times;</button>
+                    <div class="gx30-soc-formats">
+                        <button type="button" class="button gx30-soc-fmt is-active" data-fmt="square">Quadrato 1080×1080</button>
+                        <button type="button" class="button gx30-soc-fmt" data-fmt="story">Storia 1080×1920</button>
+                    </div>
+                    <div class="gx30-soc-stage">
+                        <canvas id="gx30-soc-canvas" width="1080" height="1080"></canvas>
+                    </div>
+                    <p class="gx30-soc-hint">Anteprima. Scarica il PNG e caricalo su Instagram o Facebook.</p>
+                    <div class="gx30-soc-actions">
+                        <button type="button" class="button button-primary button-hero" id="gx30-soc-download">Scarica PNG</button>
+                    </div>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
         <?php
