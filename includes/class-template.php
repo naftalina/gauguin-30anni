@@ -102,6 +102,14 @@ class GX30_Template {
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php
+    // Preload dell'immagine LCP (logo "30 anni" nella hero): la scarica subito,
+    // in parallelo al CSS, così il Largest Contentful Paint arriva prima.
+    printf(
+        '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n    ",
+        esc_url(GX30_Settings::lockup_url())
+    );
+    ?>
     <?php $this->seo_tags(); ?>
     <?php wp_head(); ?>
 </head>
@@ -200,7 +208,7 @@ class GX30_Template {
         <div class="gx-cloud-head">I ricordi dei nostri clienti</div>
         <div class="gx-cloud" id="gx-cloud" aria-hidden="true"></div>
         <div class="gx-hero-inner">
-            <img class="gx-lockup" src="<?php echo esc_url(GX30_Settings::lockup_url()); ?>" alt="Gauguin · 30 anni · 1996—2026">
+            <img class="gx-lockup" src="<?php echo esc_url(GX30_Settings::lockup_url()); ?>" alt="Gauguin · 30 anni · 1996—2026" fetchpriority="high" decoding="async">
             <div class="gx-hero-sub"><?php echo esc_html($s('hero_sub')); ?></div>
             <p class="gx-hero-lead"><?php echo $lead_html; // già escaped sopra ?></p>
 
