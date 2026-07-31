@@ -3,7 +3,7 @@
  * Plugin Name: Gauguin 30 Anni
  * Plugin URI: https://gauguin.it
  * Description: Landing page del 30° anniversario Gauguin (1996—2026): countdown, "muro dei ricordi" e form, completamente modificabile dall'admin.
- * Version: 1.15.1
+ * Version: 1.15.2
  * Author: Gauguin
  * Text Domain: gauguin-30anni
  * Requires PHP: 7.4
@@ -11,7 +11,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('GX30_VERSION', '1.15.1');
+define('GX30_VERSION', '1.15.2');
 define('GX30_FILE', __FILE__);
 define('GX30_DIR', plugin_dir_path(__FILE__));
 define('GX30_URL', plugin_dir_url(__FILE__));
@@ -39,6 +39,7 @@ require_once GX30_DIR . 'includes/class-admin.php';
  */
 function gx30_boot() {
     GX30_Settings::instance();
+    GX30_Settings::maybe_migrate();
     GX30_Memories::instance();
     GX30_Memories::maybe_upgrade();
     GX30_Template::instance();

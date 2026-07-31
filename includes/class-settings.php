@@ -22,7 +22,7 @@ class GX30_Settings {
     public static function defaults() {
         return [
             // Evento / countdown
-            'event_datetime' => '2026-10-15T19:00', // formato datetime-local
+            'event_datetime' => '2026-11-02T19:00', // formato datetime-local — 30 anni: 2 novembre 2026
 
             // Top bar
             'topbar_left'    => 'Pizzeria · Birreria',
@@ -166,6 +166,22 @@ class GX30_Settings {
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/', $dt, $m)) {
             return [(int)$m[1], (int)$m[2], (int)$m[3], (int)$m[4], (int)$m[5]];
         }
-        return [2026, 10, 15, 19, 0];
+        return [2026, 11, 2, 19, 0];
+    }
+
+    /**
+     * Migrazione one-shot: la data 30 anni reale è il 2 novembre 2026
+     * (in precedenza il default era 15 ottobre, sbagliato). Correggo il
+     * valore salvato SOLO se è ancora il vecchio default, così non tocco
+     * una data eventualmente impostata a mano dall'utente.
+     */
+    public static function maybe_migrate() {
+        $saved = get_option(self::OPTION);
+        if (!is_array($saved)) return;
+        if (isset($saved['event_datetime']) && $saved['event_datetime'] === '2026-10-15T19:00') {
+            $saved['event_datetime'] = '2026-11-02T19:00';
+            update_option(self::OPTION, $saved);
+            self::$cache = null;
+        }
     }
 }
