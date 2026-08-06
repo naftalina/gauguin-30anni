@@ -20,6 +20,35 @@ class GX30_Memories {
 
     private function __construct() {
         add_action('rest_api_init', [$this, 'register_routes']);
+        add_filter('rest_authentication_errors', [$this, 'bypass_nonce_gx30'], 100);
+    }
+
+    /**
+     * Annulla `rest_cookie_invalid_nonce` sulle nostre rotte.
+     *
+     * WordPress boccia con 403 QUALUNQUE richiesta REST che porti un header
+     * `X-WP-Nonce` non valido, anche su rotte con `permission_callback` aperto:
+     * il controllo di core scatta prima del permission_callback. Su questo sito
+     * il nonce REST per i visitatori non loggati non verifica (riprodotto anche
+     * sulla radice `/wp-json/`, che risponde 403 allo stesso modo), quindi ogni
+     * invio dal form dei ricordi tornava «Ops, qualcosa è andato storto» e il
+     * ricordo non veniva nemmeno salvato.
+     *
+     * Togliere il nonce non abbassa la sicurezza: entrambe le rotte sono
+     * dichiarate pubbliche e rispondono già oggi a chiunque non mandi l'header.
+     * La protezione vera resta l'honeypot più la moderazione dei ricordi.
+     *
+     * Stessa soluzione già collaudata nel plugin ordini (class-push.php).
+     * Qualunque errore diverso dal nonce viene lasciato passare intatto.
+     */
+    public function bypass_nonce_gx30($result) {
+        if (!is_wp_error($result)) return $result;
+        if ($result->get_error_code() !== 'rest_cookie_invalid_nonce') return $result;
+
+        $route = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+        if (strpos($route, '/wp-json/gauguin30/v1/') === false) return $result;
+
+        return null;
     }
 
     public static function table() {
@@ -76,7 +105,7 @@ class GX30_Memories {
         register_rest_route('gauguin30/v1', '/ricordi', [
             'methods'             => 'POST',
             'callback'            => [$this, 'handle_submit'],
-            'permission_callback' => '__return_true', // pubblico; protetto da nonce + honeypot
+            'permission_callback' => '__return_true', // pubblico; protetto da honeypot + moderazione
         ]);
 
         // Un ricordo pubblicato a caso, per il popup teaser in home.

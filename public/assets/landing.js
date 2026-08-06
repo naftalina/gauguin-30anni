@@ -166,16 +166,24 @@
 
     if (!CFG.restUrl) { onSuccess(); return; } // fallback (anteprima senza backend)
 
+    // Niente X-WP-Nonce di proposito: la rotta e' pubblica per design, e un
+    // nonce non valido fa bocciare la richiesta da WordPress con 403 prima
+    // ancora che arrivi al nostro codice. Vedi class-memories.php.
     fetch(CFG.restUrl, {
       method:'POST',
-      headers:{'Content-Type':'application/json', 'X-WP-Nonce': CFG.nonce || ''},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     }).then(function(r){
-      if (!r.ok) throw new Error('http');
-      return r.json();
+      if (r.ok) return r.json();
+      // Il motivo vero finisce in console: al visitatore non serve, a chi
+      // deve capire il guasto sì. Senza, ogni causa diversa sembra identica.
+      return r.json().catch(function(){ return null; }).then(function(j){
+        throw new Error('HTTP ' + r.status + (j && j.message ? ' — ' + j.message : ''));
+      });
     }).then(function(){
       onSuccess();
-    }).catch(function(){
+    }).catch(function(err){
+      if (window.console && console.error) console.error('[gx30] invio ricordo fallito:', err && err.message);
       submit.disabled = false;
       setMsg('Ops, qualcosa è andato storto. Riprova tra poco.', true);
     });
