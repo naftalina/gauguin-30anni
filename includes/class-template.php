@@ -317,6 +317,12 @@ class GX30_Template {
      */
     private function hours_html() {
         $hours = (string) GX30_Settings::get('footer_hours');
+        // Se il plugin ordini ha un'apertura straordinaria in corso, il footer
+        // non deve annunciare una chiusura che in quei giorni non c'e'.
+        if (self::closure_suspended()) {
+            $alt = trim((string) GX30_Settings::get('footer_hours_suspended'));
+            if ($alt !== '') $hours = $alt;
+        }
         $word  = trim((string) GX30_Settings::get('footer_hours_highlight'));
         $html  = esc_html($hours);
         if ($word !== '' && mb_stripos($hours, $word) !== false) {
@@ -327,6 +333,17 @@ class GX30_Template {
             );
         }
         return $html;
+    }
+
+    /**
+     * True se il plugin ordini ha un'apertura straordinaria attiva (la
+     * chiusura settimanale e' sospesa fino a una data). Se il plugin non c'e'
+     * o e' una versione precedente, si comporta come se non ci fosse nulla.
+     */
+    private static function closure_suspended() {
+        if (!class_exists('Gauguin_Orders')) return false;
+        if (!method_exists('Gauguin_Orders', 'get_closure_suspend_until')) return false;
+        return Gauguin_Orders::get_closure_suspend_until() !== '';
     }
 
     private function icon_pin() {

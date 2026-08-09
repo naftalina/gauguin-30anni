@@ -184,6 +184,7 @@ class GX30_Admin {
                     <?php $this->field_text('footer_phone', 'Telefono'); ?>
                     <?php $this->field_text('footer_hours', 'Orari', 'text', 'Es: Aperti tutti i giorni tranne il martedì. Lascia vuoto per nascondere.'); ?>
                     <?php $this->field_text('footer_hours_highlight', 'Parola da evidenziare nell’orario', 'text', 'Es: martedì (il giorno di chiusura, mostrato in grassetto bordeaux).'); ?>
+                    <?php $this->field_text('footer_hours_suspended', 'Orari durante un’apertura straordinaria', 'text', 'Usato al posto degli orari qui sopra finché nel plugin ordini è impostata un’“Apertura straordinaria fino al”. Torna automaticamente agli orari normali quando la sospensione scade.'); ?>
                     <?php $this->field_text('footer_maps_url', 'Link “Come raggiungerci” (Google Maps)', 'url'); ?>
                     <?php $this->field_text('social_facebook', 'Facebook (URL)', 'url'); ?>
                     <?php $this->field_text('social_instagram', 'Instagram (URL)', 'url'); ?>
@@ -269,7 +270,7 @@ class GX30_Admin {
 
         $text_keys = ['event_datetime','topbar_left','topbar_right','hero_sub','hero_lead_highlight',
                       'story_kicker','story_title','mem_kicker','mem_title',
-                      'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_text'];
+                      'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_hours_suspended','footer_text'];
         foreach ($text_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_text_field($in[$k]);
         }

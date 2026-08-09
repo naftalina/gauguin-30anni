@@ -76,6 +76,9 @@ class GX30_Settings {
             'footer_phone'   => '0861 75 34 67',
             'footer_hours'   => 'Aperti tutti i giorni tranne il martedì',
             'footer_hours_highlight' => 'martedì',
+            // Testo mostrato al posto di footer_hours mentre nel plugin ordini
+            // e' attiva un'apertura straordinaria (chiusura settimanale sospesa).
+            'footer_hours_suspended' => 'Aperti tutti i giorni, anche il martedì',
             'footer_maps_url'=> 'https://maps.app.goo.gl/Fck6uMmRbUvjxWJr7',
             'social_facebook' => 'https://www.facebook.com/GauguinPizzeria/',
             'social_instagram'=> 'https://www.instagram.com/gauguinpizzeria',
