@@ -74,6 +74,9 @@ class GX30_Settings {
             // Footer: informazioni
             'footer_address' => 'Alba Adriatica (TE)',
             'footer_phone'   => '0861 75 34 67',
+            // '1' = la riga orari la scrive il plugin ordini dai giorni di
+            // chiusura spuntati li'; i tre campi qui sotto restano inutilizzati.
+            'footer_hours_auto' => '1',
             'footer_hours'   => 'Aperti tutti i giorni tranne il martedì',
             'footer_hours_highlight' => 'martedì',
             // Testo mostrato al posto di footer_hours mentre nel plugin ordini
@@ -94,6 +97,57 @@ class GX30_Settings {
         if ($digits === '') return '';
         if (strpos($digits, '0') === 0) $digits = '39' . $digits;
         return '+' . $digits;
+    }
+
+    /**
+     * Giorni di chiusura letti dal plugin ordini (l'unico posto dove si
+     * spuntano). Restituisce null se il plugin non c'e' o e' una versione
+     * precedente: in quel caso il footer torna al testo scritto a mano.
+     *
+     * @return array|null indici PHP date('w'): 0=domenica ... 6=sabato
+     */
+    public static function ordering_closed_weekdays() {
+        if (!class_exists('Gauguin_Orders')) return null;
+        if (!method_exists('Gauguin_Orders', 'get_closed_weekdays')) return null;
+        $days = Gauguin_Orders::get_closed_weekdays();
+        if (!is_array($days)) return null;
+        // Apertura straordinaria in corso: in quei giorni non si chiude.
+        if (method_exists('Gauguin_Orders', 'get_closure_suspend_until')
+            && Gauguin_Orders::get_closure_suspend_until() !== '') {
+            return [];
+        }
+        return $days;
+    }
+
+    /**
+     * Frase orari generata dai giorni di chiusura. Restituisce null se il
+     * plugin ordini non e' disponibile.
+     *
+     * @param bool $html true = giorni evidenziati in <strong class="gx-closed">
+     */
+    public static function auto_hours($html = false) {
+        $days = self::ordering_closed_weekdays();
+        if ($days === null) return null;
+
+        $names = [
+            1 => 'lunedì', 2 => 'martedì', 3 => 'mercoledì', 4 => 'giovedì',
+            5 => 'venerdì', 6 => 'sabato', 0 => 'domenica',
+        ];
+        $parts = [];
+        foreach ($names as $idx => $name) {          // ordine lunedi' -> domenica
+            if (!in_array($idx, $days, true)) continue;
+            $article = ($idx === 0) ? 'la ' : 'il ';
+            $parts[] = $article . ($html ? '<strong class="gx-closed">' . esc_html($name) . '</strong>' : $name);
+        }
+        if (empty($parts)) return 'Aperti tutti i giorni';
+
+        if (count($parts) === 1) {
+            $list = $parts[0];
+        } else {
+            $last = array_pop($parts);
+            $list = implode(', ', $parts) . ' e ' . $last;
+        }
+        return 'Aperti tutti i giorni tranne ' . $list;
     }
 
     /**

@@ -290,8 +290,8 @@ class GX30_Template {
             <?php if ($s('footer_phone')): $tel = GX30_Settings::footer_phone_tel(); ?>
                 <div class="gx-foot-line"><?php echo $this->icon_phone(); ?> <a href="tel:<?php echo esc_attr($tel); ?>"><?php echo esc_html($s('footer_phone')); ?></a></div>
             <?php endif; ?>
-            <?php if ($s('footer_hours')): ?>
-                <div class="gx-foot-line"><?php echo $this->icon_clock(); ?> <?php echo $this->hours_html(); // testo escaped, parola evidenziata ?></div>
+            <?php $hours_html = $this->hours_html(); if ($hours_html !== ''): ?>
+                <div class="gx-foot-line"><?php echo $this->icon_clock(); ?> <?php echo $hours_html; // testo escaped, giorni evidenziati ?></div>
             <?php endif; ?>
             <?php if ($s('footer_maps_url')): ?>
                 <div class="gx-foot-line"><a href="<?php echo esc_url($s('footer_maps_url')); ?>" target="_blank" rel="noopener"><?php echo $this->icon_directions(); ?> Come raggiungerci</a></div>
@@ -316,6 +316,12 @@ class GX30_Template {
      * Orario col giorno di chiusura evidenziato (escaped + <strong>).
      */
     private function hours_html() {
+        // Modalita' automatica: la riga orari la scrive il plugin ordini, in
+        // base ai giorni di chiusura spuntati li'. Una spunta sola, due posti
+        // aggiornati (sito + ordini online).
+        $auto = self::auto_hours_html();
+        if ($auto !== null) return $auto;
+
         $hours = (string) GX30_Settings::get('footer_hours');
         // Se il plugin ordini ha un'apertura straordinaria in corso, il footer
         // non deve annunciare una chiusura che in quei giorni non c'e'.
@@ -333,6 +339,16 @@ class GX30_Template {
             );
         }
         return $html;
+    }
+
+    /**
+     * Riga orari generata dai giorni di chiusura del plugin ordini.
+     * null se la sincronizzazione e' spenta o il plugin non e' disponibile:
+     * in quel caso vale il testo scritto a mano.
+     */
+    private static function auto_hours_html() {
+        if ((string) GX30_Settings::get('footer_hours_auto', '1') !== '1') return null;
+        return GX30_Settings::auto_hours(true); // gia' escaped, giorni in <strong>
     }
 
     /**

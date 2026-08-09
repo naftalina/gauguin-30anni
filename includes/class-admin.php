@@ -67,6 +67,17 @@ class GX30_Admin {
         echo '</td></tr>';
     }
 
+    private function field_check($key, $label, $check_label, $desc = '') {
+        $val = (string) GX30_Settings::get($key);
+        echo '<tr><th scope="row">' . esc_html($label) . '</th><td>';
+        printf(
+            '<label><input type="checkbox" id="gx30_%s" name="%s" value="1"%s> %s</label>',
+            esc_attr($key), esc_attr($key), checked($val, '1', false), esc_html($check_label)
+        );
+        if ($desc) echo '<p class="description">' . $desc . '</p>'; // puo' contenere <strong>/<em>
+        echo '</td></tr>';
+    }
+
     private function field_textarea($key, $label, $rows = 3, $desc = '') {
         $val = GX30_Settings::get($key);
         echo '<tr><th scope="row"><label for="gx30_' . esc_attr($key) . '">' . esc_html($label) . '</label></th><td>';
@@ -182,9 +193,19 @@ class GX30_Admin {
                     <?php $this->field_text('cta_reserve_label', 'Etichetta pulsante “Prenota”'); ?>
                     <?php $this->field_text('footer_address', 'Indirizzo'); ?>
                     <?php $this->field_text('footer_phone', 'Telefono'); ?>
-                    <?php $this->field_text('footer_hours', 'Orari', 'text', 'Es: Aperti tutti i giorni tranne il martedì. Lascia vuoto per nascondere.'); ?>
-                    <?php $this->field_text('footer_hours_highlight', 'Parola da evidenziare nell’orario', 'text', 'Es: martedì (il giorno di chiusura, mostrato in grassetto bordeaux).'); ?>
-                    <?php $this->field_text('footer_hours_suspended', 'Orari durante un’apertura straordinaria', 'text', 'Usato al posto degli orari qui sopra finché nel plugin ordini è impostata un’“Apertura straordinaria fino al”. Torna automaticamente agli orari normali quando la sospensione scade.'); ?>
+                    <?php
+                    $auto_preview = GX30_Settings::auto_hours(false);
+                    $auto_on      = (string) GX30_Settings::get('footer_hours_auto', '1') === '1';
+                    $auto_desc    = $auto_preview === null
+                        ? 'Il plugin ordini non è attivo o è una versione precedente: al momento vale il testo scritto a mano qui sotto.'
+                        : 'I giorni di chiusura si spuntano in <strong>Gauguin → Impostazioni → Giorni di chiusura</strong>: quella spunta vale sia per gli ordini online che per questa riga del footer. Adesso uscirebbe: <em>' . esc_html($auto_preview) . '</em>';
+                    $this->field_check('footer_hours_auto', 'Orari del footer', 'Scrivili in automatico dai giorni di chiusura del plugin ordini', $auto_desc);
+                    $manual_note = ($auto_on && $auto_preview !== null)
+                        ? ' Non in uso adesso: la scrittura automatica è attiva.' : '';
+                    ?>
+                    <?php $this->field_text('footer_hours', 'Orari (testo manuale)', 'text', 'Es: Aperti tutti i giorni tranne il martedì. Lascia vuoto per nascondere la riga.' . $manual_note); ?>
+                    <?php $this->field_text('footer_hours_highlight', 'Parola da evidenziare nell’orario', 'text', 'Es: martedì (il giorno di chiusura, mostrato in grassetto bordeaux). Vale solo per il testo manuale.'); ?>
+                    <?php $this->field_text('footer_hours_suspended', 'Orari durante un’apertura straordinaria', 'text', 'Usato al posto del testo manuale finché nel plugin ordini è impostata un’“Apertura straordinaria fino al”. Vale solo per il testo manuale.'); ?>
                     <?php $this->field_text('footer_maps_url', 'Link “Come raggiungerci” (Google Maps)', 'url'); ?>
                     <?php $this->field_text('social_facebook', 'Facebook (URL)', 'url'); ?>
                     <?php $this->field_text('social_instagram', 'Instagram (URL)', 'url'); ?>
@@ -274,6 +295,9 @@ class GX30_Admin {
         foreach ($text_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_text_field($in[$k]);
         }
+        // Checkbox: assente dal POST quando e' tolta la spunta
+        $out['footer_hours_auto'] = isset($in['footer_hours_auto']) ? '1' : '0';
+
         $textarea_keys = ['hero_lead','story_p1','story_p2','mem_lead','meta_description'];
         foreach ($textarea_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_textarea_field($in[$k]);
