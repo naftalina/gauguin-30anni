@@ -87,6 +87,10 @@ class GX30_Template {
                     'memory' => isset($s['memory']) ? (string) $s['memory'] : '',
                 ];
             }, $seeds)),
+            // Con 'seeds_auto' i bigliettini della hero sono i ricordi approvati
+            // piu' recenti (published_list e' gia' ordinata dal piu' nuovo) e i
+            // seeds scritti a mano riempiono solo i posti che restano.
+            'seedsAuto' => (string) GX30_Settings::get('seeds_auto', '1') === '1',
             'published' => array_values(array_map(function ($r) {
                 return ['name' => (string) $r->name, 'memory' => (string) $r->memory];
             }, GX30_Memories::published_list())),

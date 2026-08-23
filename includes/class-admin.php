@@ -166,8 +166,25 @@ class GX30_Admin {
                     <?php $this->field_textarea('mem_lead', 'Testo introduttivo', 3); ?>
                 </tbody></table>
 
-                <h2 class="title">Bigliettini iniziali (svolazzano nella hero)</h2>
-                <p class="description">Nome + ricordo. Aggiungi o togli quelli che vuoi.</p>
+                <h2 class="title">Bigliettini che svolazzano nella hero</h2>
+                <table class="form-table"><tbody>
+                    <?php
+                    $seeds_auto  = (string) GX30_Settings::get('seeds_auto', '1') === '1';
+                    $pub_count   = GX30_Memories::count_published();
+                    $auto_desc   = 'Nella hero compaiono i ricordi approvati, dal più recente al più vecchio: non devi sceglierli tu, appena ne pubblichi uno prende il primo posto. Ricordi approvati adesso: <strong>' . (int) $pub_count . '</strong>';
+                    $auto_desc  .= ($pub_count >= 8)
+                        ? ' — bastano a riempire tutti gli otto bigliettini, quelli scritti a mano qui sotto non si vedono più.'
+                        : ' — i ' . (8 - (int) $pub_count) . ' posti che restano li riempiono i bigliettini scritti a mano qui sotto.';
+                    $this->field_check('seeds_auto', 'Riempimento', 'Prendi i bigliettini dai ricordi approvati, dal più recente', $auto_desc);
+                    ?>
+                </tbody></table>
+                <p class="description">
+                    <?php if ($seeds_auto): ?>
+                        Bigliettini scritti a mano: <strong>riempiono solo i posti avanzati</strong> quando i ricordi approvati non bastano. Nome + ricordo, aggiungi o togli quelli che vuoi.
+                    <?php else: ?>
+                        Nome + ricordo. Aggiungi o togli quelli che vuoi.
+                    <?php endif; ?>
+                </p>
                 <div id="gx30-seeds">
                     <?php foreach ($seeds as $i => $seed):
                         $n = isset($seed['name']) ? $seed['name'] : '';
@@ -300,6 +317,7 @@ class GX30_Admin {
         }
         // Checkbox: assente dal POST quando e' tolta la spunta
         $out['footer_hours_auto'] = isset($in['footer_hours_auto']) ? '1' : '0';
+        $out['seeds_auto']        = isset($in['seeds_auto']) ? '1' : '0';
 
         $textarea_keys = ['hero_lead','story_p1','story_p2','mem_lead','meta_description'];
         foreach ($textarea_keys as $k) {

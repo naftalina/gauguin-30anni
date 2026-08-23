@@ -217,4 +217,13 @@ class GX30_Memories {
         $table = self::table();
         return (int) $wpdb->get_var("SELECT COUNT(*) FROM $table");
     }
+
+    /**
+     * Quanti ricordi sono approvati (quelli che finiscono nella hero).
+     */
+    public static function count_published() {
+        global $wpdb;
+        $table = self::table();
+        return (int) $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE published = 1");
+    }
 }

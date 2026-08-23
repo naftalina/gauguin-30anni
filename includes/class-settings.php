@@ -49,7 +49,10 @@ class GX30_Settings {
             'mem_title'      => 'RACCONTACI LA TUA SERATA AL GAUGUIN',
             'mem_lead'       => 'Una pizza tra amici, una birra speciale, una festa indimenticabile. Lascia il tuo ricordo: i più belli li racconteremo alla serata dei 30 anni.',
 
-            // Bigliettini iniziali che svolazzano nella hero
+            // Bigliettini che svolazzano nella hero: con 'seeds_auto' attivo
+            // sono i ricordi approvati piu' recenti, e questi qui sotto servono
+            // solo a riempire i posti che restano vuoti.
+            'seeds_auto' => '1',
             'seeds' => [
                 ['name' => 'Marco',          'memory' => 'La mia prima birra al Gauguin, estate 1999. Da allora non ho più smesso.'],
                 ['name' => 'Elisa',          'memory' => 'Qui ho festeggiato la laurea con tutti gli amici. Pizza, risate e musica fino a tardi.'],

@@ -6,7 +6,7 @@
   var ev = CFG.event || {y:2026, mo:10, d:15, h:19, mi:0};
   var seeds = Array.isArray(CFG.seeds) ? CFG.seeds : [];
   var published = Array.isArray(CFG.published) ? CFG.published : [];
-  var base = seeds.concat(published); // bigliettini iniziali + ricordi approvati
+  var seedsAuto = CFG.seedsAuto !== false; // default: riempimento automatico
 
   /* ---------- Countdown ---------- */
   var target = new Date(ev.y, (ev.mo - 1), ev.d, ev.h, ev.mi, 0).getTime();
@@ -91,7 +91,7 @@
     {side:'l',x:5,t:632}, {side:'r',x:4,t:618}
   ];
   var cloud = document.getElementById('gx-cloud');
-  var MAX_CARDS = 8; // mostra al massimo 8 bigliettini, scelti a caso ad ogni visita
+  var MAX_CARDS = 8; // otto bigliettini: in automatico i piu' recenti, altrimenti a caso
   function shuffle(a){ for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 
   function makeNote(m, i, isNew){
@@ -117,9 +117,19 @@
     cloud.innerHTML='';
     var mine = [];
     try { mine = JSON.parse(localStorage.getItem('gauguin_ricordi')||'[]'); } catch(e){}
-    // selezione casuale (varia ad ogni caricamento) + il proprio ricordo davanti
-    var pool = shuffle(base.slice()).slice(0, MAX_CARDS);
-    var all = mine.concat(pool);
+    // Automatico: prima i ricordi approvati dal piu' recente (published arriva
+    // gia' ordinato cosi' dal server), poi i bigliettini scritti a mano solo
+    // per i posti che restano. Manuale: come prima, mescolati a ogni visita.
+    var pool = seedsAuto
+      ? published.concat(seeds).slice(0, MAX_CARDS)
+      : shuffle(seeds.concat(published)).slice(0, MAX_CARDS);
+    // Il proprio ricordo davanti a tutti, senza sforare i posti disponibili.
+    // Una volta approvato torna anche in "published": va tolto dal pool, o si
+    // vedrebbe due volte.
+    var key = function(m){ return (m && m.name ? m.name : '') + '\x1f' + (m && m.memory ? m.memory : ''); };
+    var seen = {};
+    mine.forEach(function(m){ seen[key(m)] = 1; });
+    var all = mine.concat(pool.filter(function(m){ return !seen[key(m)]; })).slice(0, MAX_CARDS);
     all.forEach(function(m,i){ cloud.appendChild(makeNote(m, i, i < mine.length)); });
   }
   renderCloud();
