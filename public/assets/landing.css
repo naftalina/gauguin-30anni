@@ -107,6 +107,8 @@ body.gx30-body{margin:0;background:var(--bordeaux);font-family:'Spectral',serif;
 .gx-foot-line{letter-spacing:.02em;white-space:nowrap;}
 .gx-foot-line .gx-ico{width:16px;height:16px;vertical-align:-3px;margin-right:5px;color:var(--bordeaux);}
 .gx-closed{color:var(--bordeaux);font-weight:700;}
+/* giorno normalmente di chiusura ma aperto per deroga temporanea */
+.gx-open{color:#1E7E34;font-weight:700;}
 .gx-foot-info a{color:var(--bordeaux);text-decoration:none;font-weight:700;}
 .gx-foot-info a:hover{text-decoration:underline;}
 .gx-foot-social{display:flex;gap:18px;justify-content:center;margin-top:16px;}

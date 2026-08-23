@@ -100,44 +100,67 @@ class GX30_Settings {
     }
 
     /**
-     * Giorni di chiusura letti dal plugin ordini (l'unico posto dove si
-     * spuntano). Restituisce null se il plugin non c'e' o e' una versione
+     * Giorni di chiusura spuntati nel plugin ordini (l'unico posto dove si
+     * spuntano), COMPRESI quelli temporaneamente sospesi da un'apertura
+     * straordinaria. Restituisce null se il plugin non c'e' o e' una versione
      * precedente: in quel caso il footer torna al testo scritto a mano.
      *
      * @return array|null indici PHP date('w'): 0=domenica ... 6=sabato
      */
-    public static function ordering_closed_weekdays() {
+    public static function ordering_closed_weekdays_raw() {
         if (!class_exists('Gauguin_Orders')) return null;
         if (!method_exists('Gauguin_Orders', 'get_closed_weekdays')) return null;
         $days = Gauguin_Orders::get_closed_weekdays();
-        if (!is_array($days)) return null;
-        // Apertura straordinaria in corso: in quei giorni non si chiude.
-        if (method_exists('Gauguin_Orders', 'get_closure_suspend_until')
-            && Gauguin_Orders::get_closure_suspend_until() !== '') {
-            return [];
-        }
-        return $days;
+        return is_array($days) ? $days : null;
+    }
+
+    /**
+     * True se nel plugin ordini e' impostata un'apertura straordinaria ancora
+     * in corso (la chiusura settimanale e' sospesa fino a quella data).
+     */
+    public static function ordering_closure_suspended() {
+        if (!class_exists('Gauguin_Orders')) return false;
+        if (!method_exists('Gauguin_Orders', 'get_closure_suspend_until')) return false;
+        return Gauguin_Orders::get_closure_suspend_until() !== '';
+    }
+
+    /**
+     * Giorni in cui il locale e' davvero chiuso adesso: durante un'apertura
+     * straordinaria nessuno.
+     *
+     * @return array|null indici PHP date('w'): 0=domenica ... 6=sabato
+     */
+    public static function ordering_closed_weekdays() {
+        $days = self::ordering_closed_weekdays_raw();
+        if ($days === null) return null;
+        return self::ordering_closure_suspended() ? [] : $days;
     }
 
     /**
      * Frase orari generata dai giorni di chiusura. Restituisce null se il
      * plugin ordini non e' disponibile.
      *
-     * @param bool $html true = giorni evidenziati in <strong class="gx-closed">
+     * Durante un'apertura straordinaria la frase NON diventa un generico
+     * "Aperti tutti i giorni" (indistinguibile dall'aver tolto la spunta): dice
+     * "anche il martedi'", cosi' dal sito si vede che e' una deroga temporanea.
+     *
+     * @param bool $html true = giorni evidenziati in <strong>
      */
     public static function auto_hours($html = false) {
-        $days = self::ordering_closed_weekdays();
+        $days = self::ordering_closed_weekdays_raw();
         if ($days === null) return null;
+        $suspended = self::ordering_closure_suspended();
 
         $names = [
             1 => 'lunedì', 2 => 'martedì', 3 => 'mercoledì', 4 => 'giovedì',
             5 => 'venerdì', 6 => 'sabato', 0 => 'domenica',
         ];
+        $class = $suspended ? 'gx-open' : 'gx-closed';
         $parts = [];
         foreach ($names as $idx => $name) {          // ordine lunedi' -> domenica
             if (!in_array($idx, $days, true)) continue;
             $article = ($idx === 0) ? 'la ' : 'il ';
-            $parts[] = $article . ($html ? '<strong class="gx-closed">' . esc_html($name) . '</strong>' : $name);
+            $parts[] = $article . ($html ? '<strong class="' . $class . '">' . esc_html($name) . '</strong>' : $name);
         }
         if (empty($parts)) return 'Aperti tutti i giorni';
 
@@ -147,7 +170,9 @@ class GX30_Settings {
             $last = array_pop($parts);
             $list = implode(', ', $parts) . ' e ' . $last;
         }
-        return 'Aperti tutti i giorni tranne ' . $list;
+        return $suspended
+            ? 'Aperti tutti i giorni, anche ' . $list
+            : 'Aperti tutti i giorni tranne ' . $list;
     }
 
     /**

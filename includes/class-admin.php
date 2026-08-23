@@ -199,6 +199,9 @@ class GX30_Admin {
                     $auto_desc    = $auto_preview === null
                         ? 'Il plugin ordini non è attivo o è una versione precedente: al momento vale il testo scritto a mano qui sotto.'
                         : 'I giorni di chiusura si spuntano in <strong>Gauguin → Impostazioni → Giorni di chiusura</strong>: quella spunta vale sia per gli ordini online che per questa riga del footer. Adesso uscirebbe: <em>' . esc_html($auto_preview) . '</em>';
+                    if ($auto_preview !== null && GX30_Settings::ordering_closure_suspended()) {
+                        $auto_desc .= ' <strong>Attenzione:</strong> nel plugin ordini c’è un’<em>apertura straordinaria</em> in corso, per questo il footer dice “anche il martedì” invece di “tranne”. Si toglie da <strong>Gauguin → Impostazioni → Apertura straordinaria fino al</strong>.';
+                    }
                     $this->field_check('footer_hours_auto', 'Orari del footer', 'Scrivili in automatico dai giorni di chiusura del plugin ordini', $auto_desc);
                     $manual_note = ($auto_on && $auto_preview !== null)
                         ? ' Non in uso adesso: la scrittura automatica è attiva.' : '';
