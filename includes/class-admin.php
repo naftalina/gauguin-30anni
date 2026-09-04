@@ -63,7 +63,9 @@ class GX30_Admin {
             '<input type="%s" id="gx30_%s" name="%s" value="%s" class="regular-text">',
             esc_attr($type), esc_attr($key), esc_attr($key), esc_attr($val)
         );
-        if ($desc) echo '<p class="description">' . esc_html($desc) . '</p>';
+        // wp_kses_post e non esc_html: alcune descrizioni usano <strong>/<em>/<code>
+        // (stessa convenzione di field_check). Il testo semplice non ne risente.
+        if ($desc) echo '<p class="description">' . wp_kses_post($desc) . '</p>';
         echo '</td></tr>';
     }
 
@@ -232,6 +234,30 @@ class GX30_Admin {
                     <?php $this->field_text('footer_text', 'Riga finale del footer'); ?>
                 </tbody></table>
 
+                <h2 class="title">Dati per Google e per le AI (schema.org)</h2>
+                <p class="description" style="max-width:46em">
+                    Questi campi non si vedono sul sito: finiscono nei dati strutturati che
+                    leggono Google, ChatGPT, Perplexity e Gemini per rispondere a domande tipo
+                    <em>“dove mangio una pizza ad Alba Adriatica”</em> o <em>“a che ora apre il Gauguin”</em>.
+                    <strong>Un campo lasciato vuoto viene semplicemente omesso</strong>: meglio vuoto che sbagliato.
+                </p>
+                <table class="form-table"><tbody>
+                    <?php $this->field_text('schema_street', 'Via e numero civico', 'text', 'Es: Via Cesare Battisti, 12. <strong>Il civico va aggiunto a mano</strong>: non era presente da nessuna parte nel sito.'); ?>
+                    <?php $this->field_text('schema_postal', 'CAP', 'text', 'Es: 64011'); ?>
+                    <?php $this->field_text('schema_locality', 'Comune', 'text', 'Es: Alba Adriatica'); ?>
+                    <?php $this->field_text('schema_region', 'Provincia', 'text', 'Sigla di due lettere. Es: TE'); ?>
+                    <?php $this->field_text('schema_lat', 'Latitudine', 'text', 'Ricavata dal link Google Maps qui sopra. Cambiala solo se il pin è impreciso.'); ?>
+                    <?php $this->field_text('schema_lng', 'Longitudine'); ?>
+                    <?php
+                    $oh_days = GX30_Settings::auto_hours(false);
+                    $oh_desc = 'Formato 24 ore, es. <code>18:30</code>. <strong>Vanno compilati tutti e due</strong>, altrimenti gli orari non vengono pubblicati affatto. '
+                        . 'I giorni si prendono da soli dai giorni di chiusura del plugin ordini'
+                        . ($oh_days === null ? '.' : ' (adesso: <em>' . esc_html($oh_days) . '</em>).');
+                    ?>
+                    <?php $this->field_text('schema_open', 'Orario di apertura', 'text', $oh_desc); ?>
+                    <?php $this->field_text('schema_close', 'Orario di chiusura', 'text', 'Se chiudete dopo mezzanotte scrivi comunque l’ora reale, es. <code>01:00</code>.'); ?>
+                </tbody></table>
+
                 <h2 class="title">Notifiche</h2>
                 <table class="form-table"><tbody>
                     <?php $this->field_text('notify_email', 'Email per i nuovi ricordi', 'email', 'Lascia vuoto per usare l’email admin del sito.'); ?>
@@ -311,7 +337,8 @@ class GX30_Admin {
 
         $text_keys = ['event_datetime','topbar_left','topbar_right','hero_sub','hero_lead_highlight',
                       'story_kicker','story_title','mem_kicker','mem_title',
-                      'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_hours_suspended','footer_text'];
+                      'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_hours_suspended','footer_text',
+                      'schema_street','schema_postal','schema_locality','schema_region','schema_lat','schema_lng','schema_open','schema_close'];
         foreach ($text_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_text_field($in[$k]);
         }

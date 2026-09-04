@@ -126,10 +126,17 @@ class GX30_Template {
     }
 
     /**
-     * Meta Open Graph / Twitter + schema.org. Se è attivo un plugin SEO,
-     * lascio gestire a lui per evitare tag duplicati.
+     * Meta Open Graph / Twitter: se e' attivo un plugin SEO lascio gestire a
+     * lui, per non duplicare i tag. Il JSON-LD invece NON passa di qui: viene
+     * emesso sempre da schema_jsonld(), perche' Yoast pubblica solo un
+     * Organization generico e non dichiara mai che siamo un ristorante.
      */
     private function seo_tags() {
+        $this->og_tags();
+        $this->schema_jsonld();
+    }
+
+    private function og_tags() {
         if (defined('WPSEO_VERSION') || class_exists('RankMath') || defined('AIOSEO_VERSION') || defined('SEOPRESS_VERSION')) {
             return;
         }
@@ -153,22 +160,157 @@ class GX30_Template {
     <meta name="twitter:description" content="<?php echo esc_attr($desc); ?>">
     <meta name="twitter:image" content="<?php echo esc_url($img); ?>">
         <?php
+    }
+
+    /**
+     * JSON-LD "Restaurant" completo. E' il blocco che i motori generativi
+     * (ChatGPT, Perplexity, Google AI Overviews) leggono per rispondere a
+     * "dove mangio ad Alba Adriatica", "a che ora apre", "fanno asporto".
+     * Emesso SEMPRE, anche con Yoast attivo: ha un @id proprio, quindi non
+     * va in conflitto col grafo di Yoast, lo arricchisce.
+     */
+    private function schema_jsonld() {
+        $site = get_bloginfo('name');
+        $desc = trim((string) GX30_Settings::get('meta_description'));
+
         $schema = [
-            '@context'      => 'https://schema.org',
-            '@type'         => 'Restaurant',
-            'name'          => $site,
-            'servesCuisine' => ['Pizza', 'Birreria'],
-            'url'           => home_url('/'),
-            'image'         => $img,
-            'priceRange'    => '€€',
+            '@context'           => 'https://schema.org',
+            '@type'              => 'Restaurant',
+            '@id'                => home_url('/#restaurant'),
+            'name'               => $site,
+            'url'                => home_url('/'),
+            'image'              => GX30_Settings::og_image_url(),
+            'servesCuisine'      => ['Pizza', 'Cucina italiana', 'Birreria'],
+            'priceRange'         => '€€',
+            'currenciesAccepted' => 'EUR',
+            'paymentAccepted'    => 'Contanti, Carte di credito, Carte di debito',
+            'foundingDate'       => '1996',
         ];
+        if ($desc !== '') $schema['description'] = $desc;
+
         $phone = GX30_Settings::footer_phone_tel();
         if ($phone) $schema['telephone'] = $phone;
-        $addr = trim((string) GX30_Settings::get('footer_address'));
-        if ($addr) {
-            $schema['address'] = ['@type' => 'PostalAddress', 'addressLocality' => $addr, 'addressCountry' => 'IT'];
+
+        // Indirizzo: includo solo le parti effettivamente compilate, mai
+        // valori inventati (un indirizzo sbagliato e' peggio di nessun dato).
+        $street   = trim((string) GX30_Settings::get('schema_street'));
+        $postal   = trim((string) GX30_Settings::get('schema_postal'));
+        $locality = trim((string) GX30_Settings::get('schema_locality'));
+        $region   = trim((string) GX30_Settings::get('schema_region'));
+        if ($locality === '') {
+            // Fallback sul vecchio campo libero del footer.
+            $locality = trim((string) GX30_Settings::get('footer_address'));
         }
-        echo "\n    " . '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>' . "\n";
+        if ($locality !== '') {
+            $addr = ['@type' => 'PostalAddress', 'addressCountry' => 'IT', 'addressLocality' => $locality];
+            if ($street !== '') $addr['streetAddress'] = $street;
+            if ($postal !== '') $addr['postalCode']    = $postal;
+            if ($region !== '') $addr['addressRegion'] = $region;
+            $schema['address'] = $addr;
+        }
+
+        $lat = trim((string) GX30_Settings::get('schema_lat'));
+        $lng = trim((string) GX30_Settings::get('schema_lng'));
+        if (is_numeric($lat) && is_numeric($lng)) {
+            $schema['geo'] = ['@type' => 'GeoCoordinates', 'latitude' => (float) $lat, 'longitude' => (float) $lng];
+        }
+
+        $maps = trim((string) GX30_Settings::get('footer_maps_url'));
+        if ($maps !== '') $schema['hasMap'] = $maps;
+
+        $hours = $this->opening_hours_spec();
+        if ($hours) $schema['openingHoursSpecification'] = $hours;
+
+        // Profili social: aiutano le AI a collegare sito, pagina FB e IG.
+        $sameas = array_values(array_filter([
+            trim((string) GX30_Settings::get('social_facebook')),
+            trim((string) GX30_Settings::get('social_instagram')),
+        ]));
+        if ($sameas) $schema['sameAs'] = $sameas;
+
+        // Menu e azioni: dicono all'AI che si puo' ordinare e prenotare, e dove.
+        $menu_url = $this->menu_page_url();
+        if ($menu_url) $schema['hasMenu'] = $menu_url;
+
+        $schema['acceptsReservations'] = home_url('/');
+
+        $order_url = $this->ordering_page_url();
+        if ($order_url) {
+            $schema['potentialAction'] = [
+                '@type'  => 'OrderAction',
+                'target' => [
+                    '@type'          => 'EntryPoint',
+                    'urlTemplate'    => $order_url,
+                    'inLanguage'     => 'it-IT',
+                    'actionPlatform' => [
+                        'http://schema.org/DesktopWebPlatform',
+                        'http://schema.org/MobileWebPlatform',
+                    ],
+                ],
+                'deliveryMethod' => ['http://purl.org/goodrelations/v1#DeliveryModePickUp'],
+            ];
+        }
+
+        echo "\n    " . '<script type="application/ld+json">'
+            . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            . '</script>' . "\n";
+    }
+
+    /**
+     * openingHoursSpecification costruito dai giorni di chiusura del plugin
+     * ordini (stessa fonte della riga orari del footer, cosi' non divergono)
+     * piu' l'orario di apertura/chiusura dalle impostazioni. Se manca uno dei
+     * due orari restituisco null: meglio nessun dato che un orario sbagliato.
+     */
+    private function opening_hours_spec() {
+        $open  = trim((string) GX30_Settings::get('schema_open'));
+        $close = trim((string) GX30_Settings::get('schema_close'));
+        if (!preg_match('/^\d{1,2}:\d{2}$/', $open) || !preg_match('/^\d{1,2}:\d{2}$/', $close)) {
+            return null;
+        }
+
+        $map = [
+            0 => 'https://schema.org/Sunday',
+            1 => 'https://schema.org/Monday',
+            2 => 'https://schema.org/Tuesday',
+            3 => 'https://schema.org/Wednesday',
+            4 => 'https://schema.org/Thursday',
+            5 => 'https://schema.org/Friday',
+            6 => 'https://schema.org/Saturday',
+        ];
+        $closed = GX30_Settings::ordering_closed_weekdays_raw();
+        // Durante un'apertura straordinaria la chiusura settimanale non vale.
+        if (!is_array($closed) || GX30_Settings::ordering_closure_suspended()) $closed = [];
+
+        $days = [];
+        foreach ($map as $idx => $url) {
+            if (in_array($idx, $closed, true)) continue;
+            $days[] = $url;
+        }
+        if (!$days) return null;
+
+        return [[
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => $days,
+            'opens'     => str_pad($open, 5, '0', STR_PAD_LEFT),
+            'closes'    => str_pad($close, 5, '0', STR_PAD_LEFT),
+        ]];
+    }
+
+    /** URL della pagina che ospita il menu digitale (plugin gauguin-menu). */
+    private function menu_page_url() {
+        if (class_exists('GXM_Template') && method_exists('GXM_Template', 'menu_url')) {
+            $u = GXM_Template::menu_url();
+            if ($u) return $u;
+        }
+        $page = get_page_by_path('menu');
+        return $page ? get_permalink($page) : '';
+    }
+
+    /** URL della pagina ordini (/ordina/), se pubblicata. */
+    private function ordering_page_url() {
+        $page = get_page_by_path('ordina');
+        return $page ? get_permalink($page) : '';
     }
 
     /**

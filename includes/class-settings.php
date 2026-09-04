@@ -86,6 +86,20 @@ class GX30_Settings {
             // e' attiva un'apertura straordinaria (chiusura settimanale sospesa).
             'footer_hours_suspended' => 'Aperti tutti i giorni, anche il martedì',
             'footer_maps_url'=> 'https://maps.app.goo.gl/Fck6uMmRbUvjxWJr7',
+
+            // --- Dati strutturati schema.org (GEO / ricerca AI). Servono a farsi
+            // citare da ChatGPT, Perplexity, Google AI Overviews. Ogni campo vuoto
+            // viene semplicemente omesso dal JSON-LD: mai pubblicare dati inventati.
+            'schema_street'  => 'Via Cesare Battisti',   // AGGIUNGERE IL CIVICO
+            'schema_postal'  => '64011',
+            'schema_locality'=> 'Alba Adriatica',
+            'schema_region'  => 'TE',
+            'schema_lat'     => '42.8362303',
+            'schema_lng'     => '13.9306367',
+            // Orario di servizio, formato 24h HH:MM. Vuoti = niente
+            // openingHoursSpecification (i giorni di chiusura arrivano dal plugin ordini).
+            'schema_open'    => '',
+            'schema_close'   => '',
             'social_facebook' => 'https://www.facebook.com/GauguinPizzeria/',
             'social_instagram'=> 'https://www.instagram.com/gauguinpizzeria',
             'footer_text'    => 'Gauguin · Pizzeria Birreria · dal 1996',
