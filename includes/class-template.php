@@ -170,7 +170,9 @@ class GX30_Template {
      * va in conflitto col grafo di Yoast, lo arricchisce.
      */
     private function schema_jsonld() {
-        $site = get_bloginfo('name');
+        // NON get_bloginfo('name'): il titolo del sito e' ottimizzato per la
+        // SERP e un'AI lo citerebbe come ragione sociale. Vedi business_name().
+        $site = GX30_Settings::business_name();
         $desc = trim((string) GX30_Settings::get('meta_description'));
 
         $schema = [

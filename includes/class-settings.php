@@ -90,6 +90,7 @@ class GX30_Settings {
             // --- Dati strutturati schema.org (GEO / ricerca AI). Servono a farsi
             // citare da ChatGPT, Perplexity, Google AI Overviews. Ogni campo vuoto
             // viene semplicemente omesso dal JSON-LD: mai pubblicare dati inventati.
+            'schema_name'    => '',            // vuoto = nome azienda di Yoast, poi titolo del sito
             'schema_street'  => 'Via Cesare Battisti',   // AGGIUNGERE IL CIVICO
             'schema_postal'  => '64011',
             'schema_locality'=> 'Alba Adriatica',
@@ -231,6 +232,28 @@ class GX30_Settings {
     /**
      * Immagine per l'anteprima social (Open Graph).
      */
+    /**
+     * Nome dell'attività per i dati strutturati. NON usare get_bloginfo('name')
+     * da solo: il titolo del sito è ottimizzato per la SERP
+     * ("Pizzeria Birreria Gauguin - Alba Adriatica | Pizza, Birra Artigianale")
+     * e un'AI lo citerebbe come se fosse la ragione sociale. Ordine: campo del
+     * pannello → nome azienda di Yoast → titolo del sito troncato al primo
+     * separatore.
+     */
+    public static function business_name() {
+        $manual = trim((string) self::get('schema_name'));
+        if ($manual !== '') return $manual;
+
+        $titles = get_option('wpseo_titles', []);
+        if (is_array($titles) && !empty($titles['company_name'])) {
+            return trim((string) $titles['company_name']);
+        }
+
+        $name = (string) get_bloginfo('name');
+        $name = preg_split('/\s+[|\x{2013}\x{2014}]\s+|\s+-\s+/u', $name)[0];
+        return trim($name);
+    }
+
     public static function og_image_url() {
         $c = self::get('og_image');
         return $c ? $c : GX30_URL . 'public/assets/og-cover.png';

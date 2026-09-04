@@ -242,6 +242,11 @@ class GX30_Admin {
                     <strong>Un campo lasciato vuoto viene semplicemente omesso</strong>: meglio vuoto che sbagliato.
                 </p>
                 <table class="form-table"><tbody>
+                    <?php
+                    $auto_name = GX30_Settings::business_name();
+                    $this->field_text('schema_name', 'Nome dell’attività', 'text',
+                        'Come si chiama il locale, non il titolo del sito. Lascia vuoto per usare il nome azienda di Yoast: adesso uscirebbe <em>' . esc_html($auto_name) . '</em>.');
+                    ?>
                     <?php $this->field_text('schema_street', 'Via e numero civico', 'text', 'Es: Via Cesare Battisti, 12. <strong>Il civico va aggiunto a mano</strong>: non era presente da nessuna parte nel sito.'); ?>
                     <?php $this->field_text('schema_postal', 'CAP', 'text', 'Es: 64011'); ?>
                     <?php $this->field_text('schema_locality', 'Comune', 'text', 'Es: Alba Adriatica'); ?>
@@ -338,7 +343,7 @@ class GX30_Admin {
         $text_keys = ['event_datetime','topbar_left','topbar_right','hero_sub','hero_lead_highlight',
                       'story_kicker','story_title','mem_kicker','mem_title',
                       'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_hours_suspended','footer_text',
-                      'schema_street','schema_postal','schema_locality','schema_region','schema_lat','schema_lng','schema_open','schema_close'];
+                      'schema_name','schema_street','schema_postal','schema_locality','schema_region','schema_lat','schema_lng','schema_open','schema_close'];
         foreach ($text_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_text_field($in[$k]);
         }
