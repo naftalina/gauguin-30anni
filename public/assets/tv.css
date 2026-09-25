@@ -1,0 +1,159 @@
+/* Gauguin 30 Anni — slideshow per le TV del locale (16:9, sempre acceso).
+   Tutto in unita' viewport: la stessa pagina scala identica da 720p a 4K.
+   --safe tiene i testi lontani dai bordi, che molte TV tagliano (overscan). */
+:root{
+  --bordeaux:#9E152A; --bordeaux-2:#A6182D; --bordeaux-d:#8E1326; --bordeaux-dd:#7C0F20;
+  --cream:#F7EDDD; --ink:#3A1318; --ink-soft:#553034;
+  --pink:#F0C9CF; --pink-2:#F4D7DB; --pink-3:#FBE4E7; --pink-4:#F0BFC5;
+  --safe:4.2vmin;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--bordeaux-dd);}
+body.gx-tv{
+  font-family:'Spectral',Georgia,serif;color:var(--cream);cursor:none;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ------------------------------------------------------------------ palco */
+.gx-tv-stage{position:fixed;inset:0;}
+
+.gx-slide{
+  position:absolute;inset:0;opacity:0;
+  transition:opacity 1.2s ease;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bordeaux);
+}
+.gx-slide.is-in{opacity:1;}
+
+/* ------------------------------------------------------- slide 1: la foto */
+.gx-slide-photo{background:#3A1318;}
+.gx-photo{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  transform:scale(1.02);
+  transition:transform 14s linear;
+}
+.gx-slide-photo.is-in .gx-photo{transform:scale(1.13) translate(1.2%,-1%);}
+/* Velo in basso: il testo resta leggibile su qualsiasi foto. */
+.gx-photo-veil{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(58,19,24,.82) 0%,rgba(58,19,24,.30) 26%,transparent 52%);
+}
+.gx-photo-cap{
+  position:absolute;left:var(--safe);right:var(--safe);bottom:var(--safe);
+  display:flex;align-items:flex-end;justify-content:space-between;gap:4vw;
+}
+.gx-photo-line{font-size:2.5vmin;line-height:1.45;font-style:italic;color:var(--pink-3);max-width:62%;
+  text-shadow:0 .3vmin 1.4vmin rgba(0,0,0,.55);}
+.gx-photo-tag{
+  font-family:'Anton',Impact,sans-serif;font-size:1.7vmin;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--pink);white-space:nowrap;text-shadow:0 .3vmin 1.4vmin rgba(0,0,0,.6);
+}
+
+/* --------------------------------------------------- slide 2: il ricordo */
+.gx-slide-memory{
+  background:radial-gradient(120% 90% at 50% 0%,var(--bordeaux-2) 0%,var(--bordeaux) 55%,var(--bordeaux-d) 100%);
+}
+.gx-mem{
+  width:min(78vw,150vmin);padding:0 var(--safe);text-align:center;
+}
+.gx-kicker{
+  font-family:'Anton',Impact,sans-serif;font-size:1.9vmin;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--pink-4);margin-bottom:5vmin;
+}
+.gx-mem-card{
+  display:inline-block;max-width:100%;
+  background:var(--cream);color:var(--ink);
+  border-radius:1.4vmin;padding:6vmin 7vmin 5vmin;
+  box-shadow:0 3vmin 7vmin rgba(0,0,0,.30);
+  transform:rotate(-.7deg);
+}
+.gx-mem-quote{
+  font-size:4.4vmin;line-height:1.42;font-style:italic;
+}
+.gx-mem-quote.is-long{font-size:3.4vmin;line-height:1.45;}
+.gx-mem-name{
+  margin-top:4vmin;font-family:'Anton',Impact,sans-serif;font-size:2.1vmin;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--bordeaux);
+}
+
+/* ---------------------------------------------------- slide 3: la frase */
+.gx-slide-claim{
+  background:linear-gradient(160deg,var(--bordeaux-2) 0%,var(--bordeaux) 45%,var(--bordeaux-dd) 100%);
+}
+.gx-claim{
+  width:min(84vw,170vmin);padding:0 var(--safe);text-align:center;
+}
+.gx-claim-text{
+  font-family:'Anton',Impact,sans-serif;font-size:9vmin;line-height:1.02;
+  letter-spacing:.012em;text-transform:uppercase;color:#fff;
+}
+.gx-claim-text.is-long{font-size:6.4vmin;line-height:1.1;}
+.gx-claim-rule{
+  width:14vmin;height:.5vmin;background:var(--pink-4);margin:5vmin auto 0;border-radius:.5vmin;
+}
+.gx-claim-sub{
+  margin-top:4vmin;font-size:2.3vmin;letter-spacing:.34em;text-transform:uppercase;color:var(--pink-2);
+}
+
+/* ------------------------------------------------- slide 4: il countdown */
+.gx-slide-cd{
+  background:radial-gradient(115% 80% at 50% 8%,rgba(255,255,255,.10) 0%,transparent 55%),
+             linear-gradient(180deg,var(--bordeaux-2) 0%,var(--bordeaux) 60%,var(--bordeaux-d) 100%);
+}
+.gx-cd{text-align:center;padding:0 var(--safe);}
+.gx-cd-logo{width:min(46vmin,52vw);height:auto;display:block;margin:0 auto 5vmin;}
+.gx-cd-grid{display:flex;gap:2.4vmin;justify-content:center;margin-top:1vmin;}
+.gx-cd-cell{
+  min-width:19vmin;background:rgba(255,255,255,.09);border:.2vmin solid rgba(255,255,255,.3);
+  border-radius:.8vmin;padding:3.4vmin 2vmin 2.6vmin;
+}
+.gx-cd-cell.is-days{background:#fff;border-color:#fff;}
+.gx-cd-num{font-family:'Anton',Impact,sans-serif;font-size:11vmin;line-height:.88;color:#fff;}
+.gx-cd-cell.is-days .gx-cd-num{color:var(--bordeaux);}
+.gx-cd-lab{font-size:1.7vmin;letter-spacing:.3em;text-transform:uppercase;color:var(--pink-4);margin-top:1.8vmin;}
+.gx-cd-cell.is-days .gx-cd-lab{color:var(--bordeaux-d);}
+.gx-cd-foot{margin-top:5vmin;font-size:2.6vmin;font-style:italic;color:var(--pink-3);}
+
+/* --------------------------------------------------------- slide 5: il QR */
+.gx-slide-qr{
+  background:linear-gradient(120deg,var(--bordeaux) 0%,var(--bordeaux-d) 58%,var(--bordeaux-dd) 100%);
+}
+.gx-qr{
+  display:flex;align-items:center;gap:8vmin;padding:0 calc(var(--safe) + 3vmin);
+  max-width:92vw;
+}
+.gx-qr-card{
+  background:#fff;border-radius:1.6vmin;padding:3vmin;flex:0 0 auto;
+  box-shadow:0 3vmin 7vmin rgba(0,0,0,.32);
+}
+.gx-qr-card img{display:block;width:40vmin;height:40vmin;object-fit:contain;}
+.gx-qr-body{text-align:left;}
+.gx-qr-title{
+  font-family:'Anton',Impact,sans-serif;font-size:7vmin;line-height:1.05;text-transform:uppercase;color:#fff;
+}
+.gx-qr-text{margin-top:3vmin;font-size:3vmin;line-height:1.5;color:var(--pink-3);max-width:52vmin;}
+.gx-qr-hint{
+  margin-top:4vmin;font-size:1.8vmin;letter-spacing:.3em;text-transform:uppercase;color:var(--pink-4);
+}
+
+/* ------------------------------------------------ firma d'angolo + barra */
+/* Si sposta di poco a ogni slide: su TV sempre accese evita il burn-in. */
+.gx-tv-mark{
+  position:fixed;bottom:var(--safe);right:var(--safe);
+  font-family:'Anton',Impact,sans-serif;font-size:1.6vmin;letter-spacing:.32em;text-transform:uppercase;
+  color:rgba(247,237,221,.55);pointer-events:none;
+  transition:transform 1.2s ease,opacity .6s ease;
+}
+.gx-tv-mark.is-hidden{opacity:0;}
+
+.gx-tv-bar{position:fixed;left:0;right:0;bottom:0;height:.45vmin;background:rgba(0,0,0,.22);}
+.gx-tv-bar i{display:block;height:100%;width:0;background:rgba(247,237,221,.5);}
+
+/* Schermi molto stretti (anteprima sul telefono): il QR va in colonna. */
+@media (max-aspect-ratio:1/1){
+  .gx-qr{flex-direction:column;gap:5vmin;text-align:center;}
+  .gx-qr-body{text-align:center;}
+  .gx-qr-card img{width:52vmin;height:52vmin;}
+  .gx-mem-quote{font-size:5.4vmin;}
+  .gx-claim-text{font-size:11vmin;}
+}

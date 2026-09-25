@@ -44,6 +44,26 @@ class GX30_Settings {
             // Galleria foto (array di URL immagine). Vuoto = sezione nascosta.
             'gallery'        => [],
 
+            // --- TV del locale: slideshow a ciclo continuo su /tv/ ---------
+            'tv_slide_ms'      => '9000',  // durata base di una schermata
+            'tv_show_countdown'=> '1',
+            'tv_logo'          => '',      // vuoto = stesso logo della landing
+            'tv_gallery'       => [],      // vuoto = usa la galleria qui sopra
+            // Fascia "cena": ritmo piu' lento e niente schermate fuori luogo.
+            'tv_dinner_from'   => '19:00',
+            'tv_dinner_to'     => '23:59',
+            // Frasi a tutto schermo; fanno anche da didascalia sulle foto.
+            'tv_claims' => [
+                'Dal 1996 la stessa legna nel forno',
+                "Trent'anni di pizza, birra e chiasso allegro",
+                'Birre da tutto il mondo',
+                "Qui ci si conosce per nome",
+                'Il 2 novembre festeggiamo insieme',
+            ],
+            // Schermate con QR code: l'immagine si carica dal pannello.
+            // 'when': always | day (fuori cena) | dinner (durante la cena).
+            'tv_qr' => [],
+
             // Sezione ricordi
             'mem_kicker'     => "Trent'anni di ricordi",
             'mem_title'      => 'RACCONTACI LA TUA SERATA AL GAUGUIN',

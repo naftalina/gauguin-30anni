@@ -200,6 +200,96 @@ class GX30_Admin {
                 </div>
                 <p><button type="button" class="button" id="gx30-seed-add">+ Aggiungi bigliettino</button></p>
 
+                <h2 class="title">TV del locale (slideshow)</h2>
+                <?php $tv_url = GX30_TV::tv_url(); ?>
+                <p class="description" style="font-size:13px;">
+                    Le TV vanno tutte sullo stesso indirizzo:
+                    <strong><a href="<?php echo esc_url($tv_url); ?>" target="_blank"><?php echo esc_html($tv_url); ?></a></strong><br>
+                    Le foto e i <strong>ricordi approvati</strong> entrano da soli: quello che pubblichi qui compare sugli schermi
+                    entro dieci minuti, senza toccare le chiavette.
+                </p>
+                <table class="form-table"><tbody>
+                    <?php
+                    $tv_secs = max(4, min(30, (int) round(((int) GX30_Settings::get('tv_slide_ms', 9000)) / 1000)));
+                    ?>
+                    <tr>
+                        <th scope="row"><label for="gx30-tv-secs">Durata di ogni schermata</label></th>
+                        <td>
+                            <input type="number" id="gx30-tv-secs" name="tv_slide_secs" value="<?php echo (int) $tv_secs; ?>" min="4" max="30" step="1" class="small-text"> secondi
+                            <p class="description">Ricordi e QR restano un po' di più (servono per leggere e per inquadrare). Durante la cena tutto rallenta da solo.</p>
+                        </td>
+                    </tr>
+                    <?php $this->field_check('tv_show_countdown', 'Countdown', 'Mostra anche il countdown ai 30 anni'); ?>
+                    <tr>
+                        <th scope="row">Fascia “cena”</th>
+                        <td>
+                            dalle <input type="time" name="tv_dinner_from" value="<?php echo esc_attr(GX30_Settings::get('tv_dinner_from', '19:00')); ?>">
+                            alle <input type="time" name="tv_dinner_to" value="<?php echo esc_attr(GX30_Settings::get('tv_dinner_to', '23:59')); ?>">
+                            <p class="description">In questa fascia il ritmo rallenta e restano solo le schermate adatte a chi sta mangiando.</p>
+                        </td>
+                    </tr>
+                    <?php $this->field_image('tv_logo', 'Logo sulle TV', 'Vuoto = lo stesso logo della landing.'); ?>
+                </tbody></table>
+
+                <h3 style="margin-bottom:4px;">Foto per le TV</h3>
+                <p class="description">Lascia vuoto per usare la galleria del sito. Meglio foto <strong>orizzontali e grandi</strong> (almeno 1920px): a tutto schermo si vede tutto.</p>
+                <div id="gx30-tvgallery">
+                    <?php $tvg = GX30_Settings::get('tv_gallery', []); if (!is_array($tvg)) $tvg = [];
+                    foreach ($tvg as $img): ?>
+                        <div class="gx30-tvgallery-item" style="display:inline-block;position:relative;margin:4px;vertical-align:top;">
+                            <img src="<?php echo esc_url($img); ?>" style="width:120px;height:68px;object-fit:cover;border-radius:6px;display:block;">
+                            <input type="hidden" name="tv_gallery[]" value="<?php echo esc_attr($img); ?>">
+                            <button type="button" class="button gx30-tvgallery-del" style="position:absolute;top:-8px;right:-8px;min-width:0;padding:0 7px;line-height:22px;border-radius:50%;">×</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p><button type="button" class="button" id="gx30-tvgallery-add">+ Aggiungi foto per le TV</button></p>
+
+                <h3 style="margin-bottom:4px;">Frasi a tutto schermo</h3>
+                <p class="description">Una frase per riga: girano a schermo intero e fanno anche da didascalia sulle foto. Corte funzionano meglio.</p>
+                <div id="gx30-tvclaims">
+                    <?php $claims = GX30_Settings::get('tv_claims', []); if (!is_array($claims)) $claims = [];
+                    foreach ($claims as $c): ?>
+                        <div class="gx30-tvclaim-row" style="margin:6px 0;display:flex;gap:8px;align-items:center;max-width:720px;">
+                            <input type="text" name="tv_claims[]" value="<?php echo esc_attr($c); ?>" style="flex:1">
+                            <button type="button" class="button gx30-tvclaim-del">×</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p><button type="button" class="button" id="gx30-tvclaim-add">+ Aggiungi frase</button></p>
+
+                <h3 style="margin-bottom:4px;">Schermate con QR code</h3>
+                <p class="description">Carica l'immagine di un QR (menu, ordina, lascia un ricordo) e scrivi cosa c'è dietro. Senza immagine la schermata non viene mostrata.</p>
+                <div id="gx30-tvqr">
+                    <?php $qrs = GX30_Settings::get('tv_qr', []); if (!is_array($qrs)) $qrs = [];
+                    foreach ($qrs as $i => $q):
+                        $q_img = isset($q['img']) ? $q['img'] : '';
+                        $q_tit = isset($q['title']) ? $q['title'] : '';
+                        $q_txt = isset($q['text']) ? $q['text'] : '';
+                        $q_whn = isset($q['when']) ? $q['when'] : 'always'; ?>
+                        <div class="gx30-tvqr-row" style="margin:10px 0;padding:10px;border:1px solid #dcdcde;border-radius:6px;display:flex;gap:12px;align-items:flex-start;max-width:820px;background:#fff;">
+                            <div style="flex:0 0 auto;text-align:center;">
+                                <img class="gx30-tvqr-prev" src="<?php echo esc_url($q_img); ?>" style="width:84px;height:84px;object-fit:contain;border:1px solid #e0e0e0;border-radius:4px;background:#fafafa;display:block;">
+                                <input type="hidden" class="gx30-tvqr-img" name="tv_qr[<?php echo (int) $i; ?>][img]" value="<?php echo esc_attr($q_img); ?>">
+                                <button type="button" class="button gx30-tvqr-pick" style="margin-top:6px;">Immagine</button>
+                            </div>
+                            <div style="flex:1;">
+                                <input type="text" name="tv_qr[<?php echo (int) $i; ?>][title]" value="<?php echo esc_attr($q_tit); ?>" placeholder="Titolo (es. LASCIA IL TUO RICORDO)" style="width:100%;margin-bottom:6px;">
+                                <textarea name="tv_qr[<?php echo (int) $i; ?>][text]" rows="2" placeholder="Testo sotto il titolo" style="width:100%;"><?php echo esc_textarea($q_txt); ?></textarea>
+                                <label style="display:block;margin-top:6px;">Quando:
+                                    <select name="tv_qr[<?php echo (int) $i; ?>][when]">
+                                        <option value="always" <?php selected($q_whn, 'always'); ?>>Sempre</option>
+                                        <option value="day"    <?php selected($q_whn, 'day'); ?>>Solo fuori dalla fascia cena</option>
+                                        <option value="dinner" <?php selected($q_whn, 'dinner'); ?>>Solo durante la cena</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <button type="button" class="button gx30-tvqr-del">×</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p><button type="button" class="button" id="gx30-tvqr-add">+ Aggiungi schermata QR</button></p>
+
                 <h2 class="title">SEO &amp; anteprima social</h2>
                 <table class="form-table"><tbody>
                     <?php $this->field_textarea('meta_description', 'Descrizione', 2, 'Testo mostrato su Google e quando condividi il link (WhatsApp/Facebook).'); ?>
@@ -328,6 +418,93 @@ class GX30_Admin {
                     e.target.closest('.gx30-gallery-item').remove();
                 }
             });
+
+            // --- TV: foto dedicate agli schermi -------------------------
+            var tvg = document.getElementById('gx30-tvgallery');
+            document.getElementById('gx30-tvgallery-add').addEventListener('click', function(){
+                var frame = wp.media({title:'Foto per le TV', multiple:true, library:{type:'image'}});
+                frame.on('select', function(){
+                    frame.state().get('selection').each(function(att){
+                        var a = att.toJSON();
+                        var item = document.createElement('div');
+                        item.className = 'gx30-tvgallery-item';
+                        item.style.cssText = 'display:inline-block;position:relative;margin:4px;vertical-align:top;';
+                        item.innerHTML = '<img src="'+a.url+'" style="width:120px;height:68px;object-fit:cover;border-radius:6px;display:block;">'+
+                            '<input type="hidden" name="tv_gallery[]" value="'+a.url+'">'+
+                            '<button type="button" class="button gx30-tvgallery-del" style="position:absolute;top:-8px;right:-8px;min-width:0;padding:0 7px;line-height:22px;border-radius:50%;">×</button>';
+                        tvg.appendChild(item);
+                    });
+                });
+                frame.open();
+            });
+            tvg.addEventListener('click', function(e){
+                if (e.target.classList.contains('gx30-tvgallery-del')) {
+                    e.target.closest('.gx30-tvgallery-item').remove();
+                }
+            });
+
+            // --- TV: frasi a tutto schermo ------------------------------
+            var claims = document.getElementById('gx30-tvclaims');
+            document.getElementById('gx30-tvclaim-add').addEventListener('click', function(){
+                var row = document.createElement('div');
+                row.className = 'gx30-tvclaim-row';
+                row.style.cssText = 'margin:6px 0;display:flex;gap:8px;align-items:center;max-width:720px;';
+                row.innerHTML = '<input type="text" name="tv_claims[]" style="flex:1">'+
+                    '<button type="button" class="button gx30-tvclaim-del">×</button>';
+                claims.appendChild(row);
+                row.querySelector('input').focus();
+            });
+            claims.addEventListener('click', function(e){
+                if (e.target.classList.contains('gx30-tvclaim-del')) {
+                    e.target.closest('.gx30-tvclaim-row').remove();
+                }
+            });
+
+            // --- TV: schermate QR ---------------------------------------
+            var qrWrap = document.getElementById('gx30-tvqr');
+            document.getElementById('gx30-tvqr-add').addEventListener('click', function(){
+                // Indice progressivo: i nomi dei campi devono restare distinti.
+                var i = Date.now();
+                var row = document.createElement('div');
+                row.className = 'gx30-tvqr-row';
+                row.style.cssText = 'margin:10px 0;padding:10px;border:1px solid #dcdcde;border-radius:6px;display:flex;gap:12px;align-items:flex-start;max-width:820px;background:#fff;';
+                row.innerHTML =
+                    '<div style="flex:0 0 auto;text-align:center;">'+
+                      '<img class="gx30-tvqr-prev" src="" style="width:84px;height:84px;object-fit:contain;border:1px solid #e0e0e0;border-radius:4px;background:#fafafa;display:block;">'+
+                      '<input type="hidden" class="gx30-tvqr-img" name="tv_qr['+i+'][img]" value="">'+
+                      '<button type="button" class="button gx30-tvqr-pick" style="margin-top:6px;">Immagine</button>'+
+                    '</div>'+
+                    '<div style="flex:1;">'+
+                      '<input type="text" name="tv_qr['+i+'][title]" placeholder="Titolo (es. LASCIA IL TUO RICORDO)" style="width:100%;margin-bottom:6px;">'+
+                      '<textarea name="tv_qr['+i+'][text]" rows="2" placeholder="Testo sotto il titolo" style="width:100%;"></textarea>'+
+                      '<label style="display:block;margin-top:6px;">Quando: '+
+                        '<select name="tv_qr['+i+'][when]">'+
+                          '<option value="always">Sempre</option>'+
+                          '<option value="day">Solo fuori dalla fascia cena</option>'+
+                          '<option value="dinner">Solo durante la cena</option>'+
+                        '</select>'+
+                      '</label>'+
+                    '</div>'+
+                    '<button type="button" class="button gx30-tvqr-del">×</button>';
+                qrWrap.appendChild(row);
+            });
+            qrWrap.addEventListener('click', function(e){
+                if (e.target.classList.contains('gx30-tvqr-del')) {
+                    e.target.closest('.gx30-tvqr-row').remove();
+                    return;
+                }
+                if (e.target.classList.contains('gx30-tvqr-pick')) {
+                    e.preventDefault();
+                    var row = e.target.closest('.gx30-tvqr-row');
+                    var frame = wp.media({title:'Immagine del QR code', multiple:false, library:{type:'image'}});
+                    frame.on('select', function(){
+                        var a = frame.state().get('selection').first().toJSON();
+                        row.querySelector('.gx30-tvqr-img').value = a.url;
+                        row.querySelector('.gx30-tvqr-prev').src = a.url;
+                    });
+                    frame.open();
+                }
+            });
         })();
         </script>
         <?php
@@ -383,6 +560,58 @@ class GX30_Admin {
             }
         }
         $out['gallery'] = $gallery;
+
+        // --- TV del locale -------------------------------------------------
+        if (isset($in['tv_slide_secs'])) {
+            $secs = (int) $in['tv_slide_secs'];
+            if ($secs < 4)  $secs = 4;
+            if ($secs > 30) $secs = 30;
+            $out['tv_slide_ms'] = (string) ($secs * 1000);
+        }
+        $out['tv_show_countdown'] = isset($in['tv_show_countdown']) ? '1' : '0';
+        foreach (['tv_dinner_from', 'tv_dinner_to'] as $k) {
+            if (!isset($in[$k])) continue;
+            $v = sanitize_text_field($in[$k]);
+            // Solo HH:MM; qualsiasi altra cosa torna al default della fascia.
+            $out[$k] = preg_match('/^\d{1,2}:\d{2}$/', $v) ? $v : ($k === 'tv_dinner_from' ? '19:00' : '23:59');
+        }
+        if (isset($in['tv_logo'])) $out['tv_logo'] = esc_url_raw(trim($in['tv_logo']));
+
+        $tv_gallery = [];
+        if (isset($in['tv_gallery']) && is_array($in['tv_gallery'])) {
+            foreach ($in['tv_gallery'] as $u) {
+                $u = esc_url_raw(trim($u));
+                if ($u !== '') $tv_gallery[] = $u;
+            }
+        }
+        $out['tv_gallery'] = $tv_gallery;
+
+        $tv_claims = [];
+        if (isset($in['tv_claims']) && is_array($in['tv_claims'])) {
+            foreach ($in['tv_claims'] as $c) {
+                $c = trim(sanitize_text_field($c));
+                if ($c !== '') $tv_claims[] = $c;
+            }
+        }
+        $out['tv_claims'] = $tv_claims;
+
+        $tv_qr = [];
+        if (isset($in['tv_qr']) && is_array($in['tv_qr'])) {
+            foreach ($in['tv_qr'] as $row) {
+                if (!is_array($row)) continue;
+                $img = isset($row['img']) ? esc_url_raw(trim($row['img'])) : '';
+                if ($img === '') continue; // senza QR la schermata non ha senso
+                $when = isset($row['when']) ? sanitize_text_field($row['when']) : 'always';
+                if (!in_array($when, ['always', 'day', 'dinner'], true)) $when = 'always';
+                $tv_qr[] = [
+                    'img'   => $img,
+                    'title' => isset($row['title']) ? sanitize_text_field($row['title']) : '',
+                    'text'  => isset($row['text'])  ? sanitize_textarea_field($row['text']) : '',
+                    'when'  => $when,
+                ];
+            }
+        }
+        $out['tv_qr'] = $tv_qr;
 
         update_option(GX30_Settings::OPTION, $out);
 

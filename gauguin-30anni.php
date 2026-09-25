@@ -3,7 +3,7 @@
  * Plugin Name: Gauguin 30 Anni
  * Plugin URI: https://gauguin.it
  * Description: Landing page del 30° anniversario Gauguin (1996—2026): countdown, "muro dei ricordi" e form, completamente modificabile dall'admin.
- * Version: 1.20.1
+ * Version: 1.21.0
  * Author: Gauguin
  * Text Domain: gauguin-30anni
  * Requires PHP: 7.4
@@ -11,7 +11,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('GX30_VERSION', '1.20.1');
+define('GX30_VERSION', '1.21.0');
 define('GX30_FILE', __FILE__);
 define('GX30_DIR', plugin_dir_path(__FILE__));
 define('GX30_URL', plugin_dir_url(__FILE__));
@@ -31,6 +31,7 @@ require_once GX30_DIR . 'includes/class-settings.php';
 require_once GX30_DIR . 'includes/class-card.php';
 require_once GX30_DIR . 'includes/class-memories.php';
 require_once GX30_DIR . 'includes/class-template.php';
+require_once GX30_DIR . 'includes/class-tv.php';
 require_once GX30_DIR . 'includes/class-teaser.php';
 require_once GX30_DIR . 'includes/class-admin.php';
 
@@ -43,6 +44,7 @@ function gx30_boot() {
     GX30_Memories::instance();
     GX30_Memories::maybe_upgrade();
     GX30_Template::instance();
+    GX30_TV::instance();
     GX30_Teaser::instance();
     if (is_admin()) {
         GX30_Admin::instance();
@@ -56,5 +58,8 @@ add_action('plugins_loaded', 'gx30_boot');
 function gx30_activate() {
     GX30_Memories::create_table();
     GX30_Settings::seed_defaults();
+    // La pagina /tv/ nasce da una rewrite rule: senza flush risponderebbe 404.
+    GX30_TV::instance()->add_rewrite();
+    flush_rewrite_rules(false);
 }
 register_activation_hook(__FILE__, 'gx30_activate');
