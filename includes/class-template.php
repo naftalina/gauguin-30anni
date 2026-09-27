@@ -446,10 +446,11 @@ class GX30_Template {
             <?php endif; ?>
         </div>
 
-        <?php $fb = $s('social_facebook'); $ig = $s('social_instagram'); if ($fb || $ig): ?>
+        <?php $fb = $s('social_facebook'); $ig = $s('social_instagram'); $wa = $s('social_whatsapp'); if ($fb || $ig || $wa): ?>
         <div class="gx-foot-social">
             <?php if ($fb): ?><a href="<?php echo esc_url($fb); ?>" target="_blank" rel="noopener" aria-label="Facebook"><?php echo $this->icon_facebook(); ?></a><?php endif; ?>
             <?php if ($ig): ?><a href="<?php echo esc_url($ig); ?>" target="_blank" rel="noopener" aria-label="Instagram"><?php echo $this->icon_instagram(); ?></a><?php endif; ?>
+            <?php if ($wa): ?><a href="<?php echo esc_url($wa); ?>" target="_blank" rel="noopener" aria-label="Canale WhatsApp"><?php echo $this->icon_whatsapp(); ?></a><?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -529,5 +530,9 @@ class GX30_Template {
 
     private function icon_instagram() {
         return '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>';
+    }
+
+    private function icon_whatsapp() {
+        return '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.46 15.03L2.5 21.5l4.6-1.05A9.9 9.9 0 1 0 12.04 2Zm0 18.06a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-2.73.62.64-2.64-.2-.31a8.2 8.2 0 1 1 6.77 3.66Zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47a.9.9 0 0 0-.65.31c-.23.25-.86.84-.86 2.05 0 1.2.88 2.37 1 2.53.12.16 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.29Z"/></svg>';
     }
 }

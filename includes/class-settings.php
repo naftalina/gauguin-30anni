@@ -123,6 +123,7 @@ class GX30_Settings {
             'schema_close'   => '',
             'social_facebook' => 'https://www.facebook.com/GauguinPizzeria/',
             'social_instagram'=> 'https://www.instagram.com/gauguinpizzeria',
+            'social_whatsapp' => 'https://www.whatsapp.com/channel/0029VaDfsfP1CYoOH9qDD42y',
             'footer_text'    => 'Gauguin · Pizzeria Birreria · dal 1996',
         ];
     }

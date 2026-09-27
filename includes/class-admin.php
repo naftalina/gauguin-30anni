@@ -321,6 +321,7 @@ class GX30_Admin {
                     <?php $this->field_text('footer_maps_url', 'Link “Come raggiungerci” (Google Maps)', 'url'); ?>
                     <?php $this->field_text('social_facebook', 'Facebook (URL)', 'url'); ?>
                     <?php $this->field_text('social_instagram', 'Instagram (URL)', 'url'); ?>
+                    <?php $this->field_text('social_whatsapp', 'Canale WhatsApp (URL)', 'url', 'Lascia vuoto per nascondere l’icona.'); ?>
                     <?php $this->field_text('footer_text', 'Riga finale del footer'); ?>
                 </tbody></table>
 
@@ -532,7 +533,7 @@ class GX30_Admin {
         foreach ($textarea_keys as $k) {
             if (isset($in[$k])) $out[$k] = sanitize_textarea_field($in[$k]);
         }
-        foreach (['lockup_image','story_image','og_image','footer_maps_url','social_facebook','social_instagram'] as $k) {
+        foreach (['lockup_image','story_image','og_image','footer_maps_url','social_facebook','social_instagram','social_whatsapp'] as $k) {
             if (isset($in[$k])) $out[$k] = esc_url_raw(trim($in[$k]));
         }
         if (isset($in['notify_email'])) {
