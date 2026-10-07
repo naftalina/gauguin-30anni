@@ -17,6 +17,12 @@ body.gx30-body{margin:0;background:var(--bordeaux);font-family:'Spectral',serif;
 
 .gx-wrap{width:100%;min-height:100vh;background:var(--bordeaux);overflow:hidden;}
 
+/* Avviso ferie in cima alla home (dati dal plugin ordini). Nastro oro come la promo del menu. */
+.gx-vac{padding:14px 7vw;background:linear-gradient(135deg,#F4C862,#E0A128);color:#6E1120;text-align:center;font-family:'Inter',system-ui,-apple-system,sans-serif;line-height:1.4;box-shadow:0 3px 12px rgba(0,0,0,.25);position:relative;z-index:6;}
+.gx-vac-title{font-family:'Spectral',serif;font-size:20px;font-weight:800;margin:0 0 4px;}
+.gx-vac-text{font-size:15px;max-width:640px;margin:0 auto;}
+@media(min-width:768px){.gx-vac-title{font-size:24px}.gx-vac-text{font-size:16px}}
+
 .gx-topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 7vw;background:var(--bordeaux-dd);border-bottom:1px solid rgba(255,255,255,.16);}
 .gx-eyebrow{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--pink);}
 

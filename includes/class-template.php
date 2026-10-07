@@ -97,6 +97,32 @@ class GX30_Template {
         ]);
     }
 
+    /**
+     * Avviso "chiusi per ferie" in cima alla home. Date e testo arrivano dal
+     * plugin ordini (Impostazioni → Ferie), cosi' sito, ordini e menu QR
+     * dicono la stessa cosa. Dopo l'ultimo giorno di ferie lo script lo
+     * toglie anche se la pagina arrivasse da una cache vecchia.
+     */
+    private function vacation_notice() {
+        if (!function_exists('gauguin_vacation_notice')) return;
+        $n = gauguin_vacation_notice();
+        if (!$n) return;
+        ?>
+    <div class="gx-vac" id="gx-vac" role="status">
+        <div class="gx-vac-title"><?php echo esc_html($n['title']); ?></div>
+        <div class="gx-vac-text"><?php echo esc_html($n['text']); ?></div>
+    </div>
+    <script>
+    (function(){
+        var d=new Date(),p=function(n){return(n<10?'0':'')+n};
+        if(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())><?php echo wp_json_encode($n['to']); ?>){
+            var e=document.getElementById('gx-vac'); if(e) e.remove();
+        }
+    })();
+    </script>
+        <?php
+    }
+
     private function render_document() {
         $page_title = get_the_title(get_queried_object_id());
         header('Content-Type: text/html; charset=utf-8');
@@ -344,6 +370,8 @@ class GX30_Template {
         }
         ?>
 <div class="gx-wrap">
+
+    <?php $this->vacation_notice(); ?>
 
     <div class="gx-topbar">
         <div class="gx-eyebrow"><?php echo esc_html($s('topbar_left')); ?></div>
