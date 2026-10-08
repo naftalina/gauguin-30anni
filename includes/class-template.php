@@ -135,9 +135,11 @@ class GX30_Template {
     <?php
     // Preload dell'immagine LCP (logo "30 anni" nella hero): la scarica subito,
     // in parallelo al CSS, così il Largest Contentful Paint arriva prima.
+    $lk = self::lockup_img();
     printf(
-        '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n    ",
-        esc_url(GX30_Settings::lockup_url())
+        '<link rel="preload" as="image" href="%s"%s fetchpriority="high">' . "\n    ",
+        esc_url($lk['src']),
+        $lk['srcset'] ? ' imagesrcset="' . esc_attr($lk['srcset']) . '" imagesizes="' . esc_attr($lk['sizes']) . '"' : ''
     );
     ?>
     <?php $this->seo_tags(); ?>
@@ -384,7 +386,8 @@ class GX30_Template {
         <div class="gx-cloud-head">I ricordi dei nostri clienti</div>
         <div class="gx-cloud" id="gx-cloud" aria-hidden="true"></div>
         <div class="gx-hero-inner">
-            <img class="gx-lockup" src="<?php echo esc_url(GX30_Settings::lockup_url()); ?>" alt="Gauguin · 30 anni · 1996—2026" fetchpriority="high" decoding="async">
+            <?php $lk = self::lockup_img(); ?>
+            <img class="gx-lockup" src="<?php echo esc_url($lk['src']); ?>"<?php if ($lk['srcset']): ?> srcset="<?php echo esc_attr($lk['srcset']); ?>" sizes="<?php echo esc_attr($lk['sizes']); ?>" width="825" height="224"<?php endif; ?> alt="Gauguin · 30 anni · 1996—2026" fetchpriority="high" decoding="async">
             <div class="gx-hero-sub"><?php echo esc_html($s('hero_sub')); ?></div>
             <p class="gx-hero-lead"><?php echo $lead_html; // già escaped sopra ?></p>
 
@@ -439,7 +442,7 @@ class GX30_Template {
     <?php $gallery = GX30_Settings::get('gallery', []); if (is_array($gallery) && !empty($gallery)): ?>
     <div class="gx-gallery" id="gx-gallery">
         <?php foreach ($gallery as $img): if (!$img) continue; ?>
-            <div class="gx-gallery-item"><img src="<?php echo esc_url($img); ?>" alt="Gauguin" loading="lazy"></div>
+            <div class="gx-gallery-item"><img src="<?php echo esc_url($img); ?>"<?php echo self::responsive_attrs($img, null, 220); ?> alt="Gauguin" loading="lazy" decoding="async"></div>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
@@ -453,7 +456,7 @@ class GX30_Template {
                 <p><?php echo esc_html($s('story_p2')); ?></p>
             </div>
             <div class="gx-story-photo">
-                <img src="<?php echo esc_url($s('story_image')); ?>" alt="<?php echo esc_attr($s('story_kicker')); ?>">
+                <img src="<?php echo esc_url($s('story_image')); ?>"<?php echo self::responsive_attrs($s('story_image'), '(max-width: 900px) 88vw, 510px'); ?> alt="<?php echo esc_attr($s('story_kicker')); ?>" loading="lazy" decoding="async">
             </div>
         </div>
     </div>
@@ -537,6 +540,59 @@ class GX30_Template {
         if (!class_exists('Gauguin_Orders')) return false;
         if (!method_exists('Gauguin_Orders', 'get_closure_suspend_until')) return false;
         return Gauguin_Orders::get_closure_suspend_until() !== '';
+    }
+
+    /**
+     * Logo "30 anni" della hero. Col logo incluso nel plugin servo il WebP in
+     * due misure (47 KB di PNG → ~15 KB); un logo personalizzato dal pannello
+     * resta com'è. Il PNG resta nel plugin: lo usa il renderer delle card social.
+     */
+    private static function lockup_img() {
+        $src = GX30_Settings::lockup_url();
+        if (GX30_Settings::get('lockup_image')) {
+            return ['src' => $src, 'srcset' => '', 'sizes' => ''];
+        }
+        $base = GX30_URL . 'public/assets/gauguin-30-lockup-';
+        return [
+            'src'    => $base . '825.webp',
+            'srcset' => $base . '480.webp 480w, ' . $base . '825.webp 825w',
+            'sizes'  => '(max-width: 900px) 62vw, 560px',
+        ];
+    }
+
+    /**
+     * srcset/sizes/width/height per un'immagine della libreria media, così il
+     * telefono scarica la misura ridotta invece di quella da 1024 px.
+     * $height: altezza CSS fissa (galleria) da cui ricavare la larghezza mostrata.
+     * Se l'URL non è un allegato WP restituisce '' e l'<img> resta com'era.
+     */
+    private static function responsive_attrs($url, $sizes = null, $height = null) {
+        $url = (string) $url;
+        if ($url === '') return '';
+        $key = 'gx30_att_' . md5($url);
+        $id  = get_transient($key);
+        if ($id === false) {
+            $id = (int) attachment_url_to_postid($url);
+            set_transient($key, $id, DAY_IN_SECONDS);
+        }
+        $id = (int) $id;
+        if (!$id) return '';
+        $meta = wp_get_attachment_metadata($id);
+        if (empty($meta['width']) || empty($meta['height'])) return '';
+        $srcset = wp_get_attachment_image_srcset($id, 'full', $meta);
+        if (!$srcset) return '';
+        $w = (int) $meta['width'];
+        $h = (int) $meta['height'];
+        if ($height) {
+            $sizes = (int) round($height * $w / $h) . 'px';
+        }
+        return sprintf(
+            ' srcset="%s" sizes="%s" width="%d" height="%d"',
+            esc_attr($srcset),
+            esc_attr($sizes ? $sizes : '100vw'),
+            $w,
+            $h
+        );
     }
 
     private function icon_pin() {
