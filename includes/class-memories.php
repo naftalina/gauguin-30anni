@@ -82,6 +82,12 @@ class GX30_Memories {
         if (get_option('gx30_db_ver') !== GX30_VERSION) {
             self::create_table();
             update_option('gx30_db_ver', GX30_VERSION);
+            // WP Fastest Cache tiene in cache la home: dopo un aggiornamento
+            // continuerebbe a servire l'HTML della versione vecchia (08/10/2026:
+            // logo PNG ancora online dopo la 1.22.1). Svuota la cache delle
+            // pagine una volta sola, al primo caricamento con la versione nuova.
+            // Se WPFC non c'è, l'azione non ha ascoltatori e non fa nulla.
+            do_action('wpfc_clear_all_cache');
         }
     }
 
