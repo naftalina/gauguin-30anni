@@ -57,6 +57,11 @@ class GX30_Template {
     }
 
     public function maybe_render($template) {
+        // Dal momento impostato nel pannello la home e' quella definitiva.
+        if (GX30_Home::should_render()) {
+            GX30_Home::instance()->render();
+            exit;
+        }
         if (!$this->page_uses_template()) {
             return $template;
         }
@@ -103,7 +108,7 @@ class GX30_Template {
      * dicono la stessa cosa. Dopo l'ultimo giorno di ferie lo script lo
      * toglie anche se la pagina arrivasse da una cache vecchia.
      */
-    private function vacation_notice() {
+    public function vacation_notice() {
         if (!function_exists('gauguin_vacation_notice')) return;
         $n = gauguin_vacation_notice();
         if (!$n) return;
@@ -197,11 +202,11 @@ class GX30_Template {
      * Emesso SEMPRE, anche con Yoast attivo: ha un @id proprio, quindi non
      * va in conflitto col grafo di Yoast, lo arricchisce.
      */
-    private function schema_jsonld() {
+    public function schema_jsonld($desc = null, $image = null) {
         // NON get_bloginfo('name'): il titolo del sito e' ottimizzato per la
         // SERP e un'AI lo citerebbe come ragione sociale. Vedi business_name().
         $site = GX30_Settings::business_name();
-        $desc = trim((string) GX30_Settings::get('meta_description'));
+        if ($desc === null) $desc = trim((string) GX30_Settings::get('meta_description'));
 
         $schema = [
             '@context'           => 'https://schema.org',
@@ -209,7 +214,7 @@ class GX30_Template {
             '@id'                => home_url('/#restaurant'),
             'name'               => $site,
             'url'                => home_url('/'),
-            'image'              => GX30_Settings::og_image_url(),
+            'image'              => $image ? $image : GX30_Settings::og_image_url(),
             'servesCuisine'      => ['Pizza', 'Cucina italiana', 'Birreria'],
             'priceRange'         => '€€',
             'currenciesAccepted' => 'EUR',

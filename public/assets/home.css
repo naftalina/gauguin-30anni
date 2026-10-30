@@ -1,0 +1,192 @@
+/* Gauguin — home del sito (da dopo la festa dei 30 anni).
+   Tutto sta sotto .gh: i popup Ordina/Prenota stanno fuori dal wrapper e
+   non devono ereditare font e colori di questa pagina. */
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:300 700;font-display:swap;
+  src:url(fonts/fraunces-var.woff2) format('woff2');}
+
+:root{
+  --notte:#12100E; --carta:#F6EFE4; --testo:#EFE6DA;
+  --tenue:#A99C90; --bordeaux:#9E152A; --ottone:#D9A441; --vivo:#5FD48A;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --serif:'Fraunces',Georgia,"Times New Roman",serif;
+  --pad:clamp(20px,5.5vw,80px);
+}
+html{scroll-behavior:smooth;}
+body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+.gh{color:var(--testo);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.gh *{box-sizing:border-box;}
+.gh img{display:block;max-width:100%;}
+.gh a{color:inherit;text-decoration:none;}
+.gh :focus-visible{outline:2px solid var(--ottone);outline-offset:3px;}
+.gh h1,.gh h2{font-family:var(--serif);font-weight:600;line-height:1.08;margin:0;
+  letter-spacing:-.01em;font-variation-settings:'SOFT' 20,'WONK' 1;}
+
+/* ---------- avviso ferie ---------- */
+.gx-vac{background:var(--ottone);color:#2A1A06;padding:12px var(--pad);text-align:center;}
+.gx-vac-title{font-weight:700;font-size:15.5px;}
+.gx-vac-text{font-size:14.5px;line-height:1.4;}
+
+/* ---------- barra ---------- */
+.gh .bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;
+  padding:10px var(--pad);background:rgba(18,16,14,.78);backdrop-filter:blur(14px) saturate(1.25);}
+.gh .bar .mark{display:block;height:38px;width:auto;flex:none;margin-right:auto;}
+.stato{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--testo);
+  border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 12px;white-space:nowrap;}
+.stato[hidden]{display:none;}
+.stato .pallino{width:7px;height:7px;border-radius:50%;background:var(--vivo);
+  box-shadow:0 0 0 3px rgba(95,212,138,.18);}
+.stato.chiuso .pallino{background:#7B6F68;box-shadow:none;}
+.gh .bar .ordina{background:var(--bordeaux);color:#fff;border-radius:999px;padding:9px 19px;
+  font-size:14.5px;font-weight:600;white-space:nowrap;transition:background .18s;}
+.gh .bar .ordina:hover{background:#B81A32;}
+@media (max-width:620px){ .gh .bar .mark{height:30px;} .stato .coda{display:none;} }
+
+/* ---------- apertura ---------- */
+.apertura{position:relative;min-height:calc(100svh - 58px);display:flex;flex-direction:column;
+  justify-content:flex-end;padding:var(--pad);overflow:hidden;}
+.gh .apertura>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center 45%;}
+.apertura::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(18,16,14,.42) 0%,rgba(18,16,14,.55) 45%,var(--notte) 100%);}
+.apertura .dentro{position:relative;z-index:2;}
+.occhiello{font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--ottone);
+  margin:0 0 18px;}
+.gh .apertura h1{font-size:clamp(36px,5.8vw,84px);line-height:1.02;color:#fff;}
+.gh .apertura h1 em{font-style:italic;color:var(--ottone);font-variation-settings:'SOFT' 60,'WONK' 1;}
+.sottotitolo{position:relative;z-index:2;max-width:46ch;color:#DCD2C7;
+  font-size:clamp(15.5px,1.6vw,18px);margin:18px 0 0;}
+
+/* i due pulsanti che contano */
+.azioni{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;
+  max-width:560px;}
+.gh .azioni a{flex:1 1 200px;max-width:270px;min-height:58px;display:inline-flex;align-items:center;
+  justify-content:center;gap:10px;border-radius:14px;font-size:17px;font-weight:600;
+  transition:transform .18s,background .18s,border-color .18s;}
+.gh .b-pieno{background:var(--bordeaux);color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.4);}
+.gh .b-pieno:hover{background:#B81A32;transform:translateY(-2px);}
+.gh .b-vuoto{border:1.5px solid rgba(255,255,255,.5);color:#fff;background:rgba(255,255,255,.06);
+  backdrop-filter:blur(8px);}
+.gh .b-vuoto:hover{background:rgba(255,255,255,.15);border-color:#fff;transform:translateY(-2px);}
+.azioni svg,.barra-basso svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+.servizio{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;
+  font-size:14.5px;color:#D6CCC2;}
+.gh .servizio a{border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px;}
+.gh .servizio a:hover{border-color:var(--ottone);color:#fff;}
+
+/* ---------- riga di servizio ---------- */
+.pratico{display:flex;flex-wrap:wrap;gap:8px 30px;padding:20px var(--pad);
+  font-size:14.5px;color:var(--tenue);background:var(--notte);}
+.pratico b,.pratico strong{color:var(--testo);font-weight:600;}
+.pratico .div{color:rgba(255,255,255,.16);}
+
+/* ---------- le tre bande: foto da una parte, parole dall'altra ---------- */
+.banda{display:grid;grid-template-columns:1fr;align-items:stretch;background:var(--notte);}
+.banda .foto{position:relative;overflow:hidden;min-height:clamp(280px,42svh,460px);}
+.gh .banda .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center 45%;transition:transform 1.1s cubic-bezier(.2,.7,.3,1);}
+.gh .banda:hover .foto img{transform:scale(1.045);}
+.banda .foto::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(18,16,14,.25),rgba(18,16,14,.55));}
+.banda .parole{display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(38px,6vw,80px) var(--pad);}
+.gh .banda h2{font-size:clamp(30px,4.2vw,52px);margin-bottom:16px;color:var(--testo);}
+.gh .banda h2 em{font-style:italic;color:var(--ottone);}
+.banda p{color:#D2C7BC;font-size:16.5px;margin:0;max-width:46ch;}
+.gh .banda .vai{align-self:flex-start;margin-top:26px;display:inline-flex;align-items:center;gap:9px;
+  font-size:15px;color:var(--carta);border:1px solid rgba(255,255,255,.26);border-radius:999px;
+  padding:11px 20px;transition:background .18s,border-color .18s;}
+.gh .banda .vai:hover{background:rgba(255,255,255,.09);border-color:var(--ottone);color:#fff;}
+@media (min-width:900px){
+  .banda{grid-template-columns:1fr 1fr;}
+  .banda.rovescia .foto{order:2;}
+}
+
+/* ---------- la storia: metà parole, metà fotografia ---------- */
+.storia{background:var(--bordeaux);color:#fff;display:grid;grid-template-columns:1fr;
+  align-items:stretch;padding:0;}
+@media (min-width:900px){ .storia{grid-template-columns:1fr 1fr;} }
+.storia .dentro{align-self:center;max-width:58ch;padding:clamp(44px,5.4vw,72px) var(--pad);}
+.storia .occhiello{color:rgba(255,255,255,.75);}
+.gh .storia h2{font-size:clamp(28px,4vw,46px);margin-bottom:22px;color:#fff;}
+.storia p{font-size:17px;line-height:1.65;color:#FBEDEF;margin:0 0 16px;}
+.storia p:last-child{margin-bottom:0;}
+.gh .storia .firma{margin-top:26px;font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(255,255,255,.72);}
+
+/* la foto non "sta in mezzo": occupa tutta la sua metà, bordo a bordo */
+.storia .ritratto{position:relative;margin:0;aspect-ratio:1024/654;}
+@media (min-width:900px){ .storia .ritratto{aspect-ratio:auto;min-height:100%;} }
+.gh .storia .ritratto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:22% 34%;}
+/* il rosso della fascia entra nella foto dal lato del testo: si saldano */
+.storia .ritratto::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(158,21,42,.55) 0%,rgba(158,21,42,0) 26%,
+             rgba(158,21,42,0) 62%,rgba(18,16,14,.5) 100%);}
+@media (min-width:900px){
+  .storia .ritratto::before{background:linear-gradient(90deg,var(--bordeaux) 0%,
+    rgba(158,21,42,.35) 16%,rgba(158,21,42,0) 42%,rgba(158,21,42,.18) 100%);}
+}
+.storia .didascalia{position:absolute;z-index:2;left:var(--pad);right:var(--pad);bottom:18px;
+  margin:0;font-size:13px;font-style:italic;color:rgba(255,255,255,.9);
+  text-shadow:0 1px 12px rgba(0,0,0,.6);}
+@media (min-width:900px){ .storia .didascalia{left:clamp(20px,3vw,40px);right:auto;} }
+
+/* ---------- piede ---------- */
+.piede{padding:clamp(44px,7vw,84px) var(--pad) 42px;background:var(--notte);}
+.griglia{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+.gh .griglia h4{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--tenue);margin:0 0 10px;font-weight:600;}
+.griglia p{margin:0;font-size:15.5px;line-height:1.7;}
+.griglia p strong{font-weight:600;}
+.gh .griglia a{border-bottom:1px solid rgba(255,255,255,.24);}
+.gh .griglia a:hover{border-color:var(--ottone);}
+.coda-piede{margin:34px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.09);
+  font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--tenue);}
+
+/* ---------- telefono: i due pulsanti restano sotto il pollice ---------- */
+.barra-basso{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;gap:10px;
+  padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));
+  background:rgba(18,16,14,.92);backdrop-filter:blur(16px) saturate(1.2);
+  border-top:1px solid rgba(255,255,255,.1);
+  transform:translateY(110%);transition:transform .28s ease;}
+.barra-basso.su{transform:none;}
+.gh .barra-basso a{flex:1;min-height:52px;display:inline-flex;align-items:center;justify-content:center;
+  gap:9px;border-radius:12px;font-size:16px;font-weight:600;}
+
+@media (max-width:760px){
+  .barra-basso{display:flex;}
+  .gh .bar .ordina{display:none;}            /* non serve due volte */
+  .gh .bar{gap:10px;}
+  .apertura{min-height:calc(100svh - 54px);}
+  .gh .apertura h1{font-size:clamp(34px,9.4vw,46px);}
+  .sottotitolo{font-size:16px;margin-top:14px;}
+  .azioni{margin-top:22px;gap:10px;}
+  .gh .azioni a{flex:1 1 100%;max-width:none;min-height:56px;}
+  .servizio{gap:6px 18px;margin-top:18px;}
+  .gh .servizio a{padding:9px 0;}            /* dito, non mouse */
+  .pratico{gap:6px 18px;padding:16px var(--pad);font-size:14px;}
+  .banda .foto{min-height:clamp(230px,34svh,320px);}
+  .banda .parole{padding:30px var(--pad) 36px;}
+  .gh .banda h2{font-size:clamp(28px,7.6vw,36px);}
+  .banda p{font-size:16px;}
+  .gh .banda .vai{margin-top:20px;min-height:48px;}
+  .gh .storia h2{font-size:clamp(26px,7vw,34px);}
+  .storia p{font-size:16.5px;}
+  .piede{padding:44px var(--pad) 120px;}     /* spazio per la barra in basso */
+  .griglia{gap:24px;}
+}
+@media (max-width:380px){
+  .gh .apertura h1{font-size:32px;}
+  .gh .bar .mark{height:26px;}
+  .stato{padding:4px 10px;font-size:12px;}
+}
+
+/* comparsa dolce: senza JS la pagina resta tutta visibile */
+.js .appare{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease;}
+.js .appare.vista{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .js .appare{opacity:1;transform:none;transition:none;}
+}

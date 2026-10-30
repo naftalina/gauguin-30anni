@@ -122,6 +122,7 @@ class GX30_Admin {
                 <h2 class="title">Evento &amp; countdown</h2>
                 <table class="form-table"><tbody>
                     <?php $this->field_text('event_datetime', 'Data e ora dell’evento', 'datetime-local', 'Il countdown punta a questo momento.'); ?>
+                    <?php $this->field_text('home_new_from', 'Nuova home online dal', 'datetime-local', 'Da questo momento la home del sito diventa quella definitiva. Vuoto = resta la landing 30 anni. <a href="' . esc_url(home_url('/?anteprima-home=1')) . '" target="_blank">Anteprima</a> (solo per chi è collegato come admin).'); ?>
                 </tbody></table>
 
                 <h2 class="title">Barra superiore</h2>
@@ -518,7 +519,7 @@ class GX30_Admin {
         $in = wp_unslash($_POST);
         $out = GX30_Settings::all();
 
-        $text_keys = ['event_datetime','topbar_left','topbar_right','hero_sub','hero_lead_highlight',
+        $text_keys = ['event_datetime','home_new_from','topbar_left','topbar_right','hero_sub','hero_lead_highlight',
                       'story_kicker','story_title','mem_kicker','mem_title',
                       'cta_order_label','cta_reserve_label','footer_address','footer_phone','footer_hours','footer_hours_highlight','footer_hours_suspended','footer_text',
                       'schema_name','schema_street','schema_postal','schema_locality','schema_region','schema_lat','schema_lng','schema_open','schema_close'];

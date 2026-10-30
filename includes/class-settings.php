@@ -23,6 +23,7 @@ class GX30_Settings {
         return [
             // Evento / countdown
             'event_datetime' => '2026-11-02T19:00', // formato datetime-local — 30 anni: 2 novembre 2026
+            'home_new_from'  => '2026-11-03T03:00', // da quando la home e' quella definitiva (vuoto = mai)
 
             // Top bar
             'topbar_left'    => 'Pizzeria · Birreria',

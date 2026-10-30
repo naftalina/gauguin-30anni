@@ -22,6 +22,7 @@ class GX30_Teaser {
 
     public function enqueue() {
         if (is_admin() || !is_front_page()) return;
+        if (GX30_Home::should_render()) return; // finita la festa niente invito ai ricordi
 
         // Mostrato in home. NB: da gauguin.it la home E' la landing 30 Anni,
         // e il popup deve comparire proprio li' (salta subito all'occhio,
