@@ -200,7 +200,7 @@ class GX30_Home {
     <p class="occhiello">Alba Adriatica · dal 1996</p>
     <h1>Il forno è acceso,<br><em>e la spina pure</em></h1>
   </div>
-  <p class="sottotitolo">Pizza, birre da tutto il mondo e la brace. Trent'anni che è il posto dove ci si trova.</p>
+  <p class="sottotitolo">Pizza, birre da tutto il mondo e la brace. Da trent'anni, il posto dove ci si ritrova.</p>
   <div class="azioni">
     <a class="b-pieno" href="#gauguin-order"><?php echo $ico_ordina; ?> Ordina d'asporto</a>
     <a class="b-vuoto" href="#gauguin-reservation"><?php echo $ico_prenota; ?> Prenota un tavolo</a>
