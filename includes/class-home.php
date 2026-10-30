@@ -277,7 +277,7 @@ class GX30_Home {
       ?>
     </p></div><?php endif; ?>
   </div>
-  <p class="coda-piede">Gauguin · Pizzeria Birreria · Alba Adriatica · gauguin.it</p>
+  <p class="coda-piede">Gauguin · Pizzeria Birreria · Alba Adriatica · gauguin.it · <a href="<?php echo esc_url(home_url('/privacy-cookie-policy/')); ?>">Privacy &amp; cookie</a></p>
 </footer>
 
 <nav class="barra-basso" id="barraBasso" aria-label="Azioni rapide">
