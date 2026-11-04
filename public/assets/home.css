@@ -116,10 +116,18 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
   color:rgba(255,255,255,.72);}
 
 /* la foto non "sta in mezzo": occupa tutta la sua metà, bordo a bordo */
-.storia .ritratto{position:relative;margin:0;aspect-ratio:1024/654;}
-@media (min-width:900px){ .storia .ritratto{aspect-ratio:auto;min-height:100%;} }
-.gh .storia .ritratto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+/* Telefono: la foto e' contenuto vero della cornice e le da' l'altezza.
+   Una cornice con solo aspect-ratio e la foto in absolute, dentro la griglia,
+   su Safari iOS veniva larga ZERO: foto sparita e didascalia schiacciata
+   in colonna sopra il testo (04/11/2026, iPhone 13 Pro Max). */
+.storia .ritratto{position:relative;margin:0;width:100%;min-width:0;}
+.gh .storia .ritratto img{display:block;width:100%;height:auto;aspect-ratio:1024/654;object-fit:cover;
   object-position:22% 34%;}
+/* Computer: meta' fascia, la foto riempie tutta l'altezza del testo */
+@media (min-width:900px){
+  .storia .ritratto{min-height:100%;}
+  .gh .storia .ritratto img{position:absolute;inset:0;height:100%;aspect-ratio:auto;}
+}
 /* il rosso della fascia entra nella foto dal lato del testo: si saldano */
 .storia .ritratto::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(158,21,42,.55) 0%,rgba(158,21,42,0) 26%,
@@ -142,12 +150,12 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
 .galleria .striscia{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
   -webkit-overflow-scrolling:touch;cursor:grab;}
 .galleria .striscia::-webkit-scrollbar{display:none;}
-.gh .galleria .scatto{flex:none;display:block;height:clamp(250px,42svh,460px);aspect-ratio:3/2;margin-right:-64px;
+.gh .galleria .scatto{flex:none;display:block;height:clamp(250px,42svh,460px);width:clamp(375px,63svh,690px);margin-right:-64px;
   -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%);
           mask-image:linear-gradient(90deg,transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%);}
 .gh .galleria .scatto img{width:100%;height:100%;object-fit:cover;filter:saturate(.95) brightness(.92);}
 @media (max-width:760px){
-  .gh .galleria .scatto{height:clamp(220px,36svh,320px);margin-right:-44px;
+  .gh .galleria .scatto{height:clamp(220px,36svh,320px);width:clamp(330px,54svh,480px);margin-right:-44px;
     -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%);
             mask-image:linear-gradient(90deg,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%);}
 }
