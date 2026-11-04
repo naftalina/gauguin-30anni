@@ -297,8 +297,6 @@ class GX30_Home {
   </div>
 </section>
 
-<?php self::gallery(); ?>
-
 <section class="storia appare">
   <div class="dentro">
     <p class="occhiello">La nostra storia</p>
@@ -312,6 +310,8 @@ class GX30_Home {
     <figcaption class="didascalia">Chi vi apre la porta ogni sera.</figcaption>
   </figure>
 </section>
+
+<?php self::gallery(); ?>
 
 <?php /* Un ricordo dei clienti alla volta, preso a caso via REST (la pagina e'
          in cache, il ricordo no). Resta nascosta finche' non arriva qualcosa. */ ?>
