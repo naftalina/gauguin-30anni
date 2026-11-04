@@ -45,6 +45,29 @@ class GX30_Settings {
             // Galleria foto (array di URL immagine). Vuoto = sezione nascosta.
             'gallery'        => [],
 
+            // Striscia di foto della nuova home (URL dalla libreria Media).
+            // Default: 18 scatti del servizio fotografico 2024. Vuoto = nascosta.
+            'home_gallery'   => [
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-17-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-32-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-8-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-34-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-105-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-73-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-5-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-62-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-63-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-69-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-116-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-136-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-138-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-141-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-140-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-162-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-143-scaled.jpg',
+                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-145-scaled.jpg',
+            ],
+
             // --- TV del locale: slideshow a ciclo continuo su /tv/ ---------
             'tv_slide_ms'      => '9000',  // durata base di una schermata
             'tv_show_countdown'=> '1',

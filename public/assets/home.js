@@ -69,6 +69,59 @@
     }, {threshold:0}).observe(apertura);
   })();
 
+  /* Galleria: un tocco apre la foto grande; tocco ovunque o Esc per chiudere.
+     Senza <dialog> (browser vecchi) il link apre semplicemente la foto. */
+  (function(){
+    var v = document.getElementById('visore');
+    if (!v || typeof v.showModal !== 'function') return;
+    var img = v.querySelector('img');
+    document.querySelectorAll('.galleria .scatto').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        img.src = a.href;
+        v.showModal();
+      });
+    });
+    v.addEventListener('click', function(){ v.close(); });
+    v.addEventListener('close', function(){ img.removeAttribute('src'); });
+  })();
+
+  /* I ricordi dei clienti: uno a caso, e un altro a richiesta. Si salta solo
+     quello appena mostrato e quelli senza nemmeno tre lettere (un'emoji sola). */
+  (function(){
+    var box = document.getElementById('ricordi');
+    if (!box || !CFG.ricordo || !window.fetch) return;
+    var q = box.querySelector('.ricordo'), testo = q.querySelector('.testo'),
+        nome = q.querySelector('.nome'), btn = box.querySelector('.altro');
+    var ultimo = '', occupato = false;
+    var buono = function(r){
+      return r && r.memory && (r.memory.match(/\p{L}/gu) || []).length >= 3 && r.memory !== ultimo;
+    };
+    function prendi(tentativi){
+      return fetch(CFG.ricordo, {credentials:'omit', cache:'no-store'})
+        .then(function(res){ return res.status === 200 ? res.json() : null; })
+        .then(function(r){ return buono(r) ? r : (tentativi > 1 ? prendi(tentativi - 1) : null); });
+    }
+    function mostra(primo){
+      if (occupato) return; occupato = true;
+      if (!primo) q.classList.add('via');
+      prendi(4).then(function(r){
+        if (!r || !r.memory) { occupato = false; q.classList.remove('via'); return; }
+        setTimeout(function(){
+          ultimo = r.memory;
+          testo.textContent = r.memory.trim();
+          nome.textContent = r.name || '';
+          q.classList.toggle('lungo', r.memory.length > 280);
+          box.hidden = false;
+          q.classList.remove('via');
+          occupato = false;
+        }, primo ? 0 : 350);
+      }).catch(function(){ occupato = false; q.classList.remove('via'); });
+    }
+    btn.addEventListener('click', function(){ mostra(false); });
+    mostra(true);
+  })();
+
   /* Come arrivare: su iPhone, iPad e Mac conviene Apple Maps, che apre l'app;
      altrove resta Google Maps, che su Android apre la sua. Stesso punto. */
   (function(){

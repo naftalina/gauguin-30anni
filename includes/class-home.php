@@ -129,6 +129,7 @@ class GX30_Home {
             'vacTo'   => $vac ? (string) $vac['to'] : '',
             'lat'     => trim((string) GX30_Settings::get('schema_lat')),
             'lng'     => trim((string) GX30_Settings::get('schema_lng')),
+            'ricordo' => esc_url_raw(rest_url('gauguin30/v1/ricordo-casuale')),
         ];
     }
 
@@ -151,6 +152,53 @@ class GX30_Home {
             esc_attr($sizes),
             esc_attr($alt)
         );
+    }
+
+    /**
+     * Striscia di foto dalla libreria Media (campo «Galleria della home»).
+     * Si scorre col dito; un tocco apre la foto grande nel <dialog>.
+     * Le misure ridotte le sceglie WP via srcset: sul telefono scarica poco.
+     */
+    private static function gallery() {
+        $urls = GX30_Settings::get('home_gallery', []);
+        if (!is_array($urls) || !$urls) return;
+
+        $items = [];
+        foreach ($urls as $url) {
+            $url = (string) $url;
+            if ($url === '') continue;
+            $key = 'gx30_att_' . md5($url);
+            $id  = get_transient($key);
+            if ($id === false) {
+                $id = (int) attachment_url_to_postid($url);
+                set_transient($key, $id, DAY_IN_SECONDS);
+            }
+            $id = (int) $id;
+            if ($id) {
+                $big = wp_get_attachment_image_url($id, 'full');
+                $img = wp_get_attachment_image($id, 'large', false, [
+                    'loading'  => 'lazy',
+                    'decoding' => 'async',
+                    'sizes'    => '(max-width: 760px) 300px, 390px',
+                    'alt'      => '',
+                ]);
+            } else {
+                $big = $url;
+                $img = '<img loading="lazy" decoding="async" src="' . esc_url($url) . '" alt="">';
+            }
+            if (!$img) continue;
+            $items[] = '<a class="scatto" href="' . esc_url($big ? $big : $url) . '">' . $img . '</a>';
+        }
+        if (!$items) return;
+        ?>
+<section class="galleria appare" aria-label="Foto dal Gauguin">
+  <div class="striscia" tabindex="0"><?php echo implode('', $items); // gia' escaped ?></div>
+</section>
+<dialog class="visore" id="visore" aria-label="Foto">
+  <img alt="">
+  <button type="button" class="chiudi" aria-label="Chiudi">×</button>
+</dialog>
+        <?php
     }
 
     /** Ultimo orario di ritiro impostato nel plugin ordini, '' se non disponibile. */
@@ -248,6 +296,8 @@ class GX30_Home {
   </div>
 </section>
 
+<?php self::gallery(); ?>
+
 <section class="storia appare">
   <div class="dentro">
     <p class="occhiello">La nostra storia</p>
@@ -260,6 +310,19 @@ class GX30_Home {
     <?php self::photo('squadra', [640, 1000, 1600], 'Giancarlo con la squadra del Gauguin, dietro al bancone'); ?>
     <figcaption class="didascalia">Chi vi apre la porta ogni sera.</figcaption>
   </figure>
+</section>
+
+<?php /* Un ricordo dei clienti alla volta, preso a caso via REST (la pagina e'
+         in cache, il ricordo no). Resta nascosta finche' non arriva qualcosa. */ ?>
+<section class="ricordi" id="ricordi" hidden>
+  <div class="dentro">
+    <p class="occhiello">Chi ci è passato</p>
+    <blockquote class="ricordo" aria-live="polite">
+      <p class="testo"></p>
+      <footer class="nome"></footer>
+    </blockquote>
+    <button type="button" class="altro">Un altro ricordo</button>
+  </div>
 </section>
 
 <footer class="piede">

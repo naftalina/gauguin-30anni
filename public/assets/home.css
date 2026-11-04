@@ -133,6 +133,47 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
   text-shadow:0 1px 12px rgba(0,0,0,.6);}
 @media (min-width:900px){ .storia .didascalia{left:clamp(20px,3vw,40px);right:auto;} }
 
+/* ---------- galleria: una striscia da scorrere, niente mosaico ---------- */
+.galleria{background:var(--notte);padding:clamp(28px,4vw,48px) 0;position:relative;}
+.galleria .striscia{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding:0 var(--pad);scroll-padding:0 var(--pad);scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--pad),#000 calc(100% - var(--pad)),transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 var(--pad),#000 calc(100% - var(--pad)),transparent 100%);}
+.galleria .striscia::-webkit-scrollbar{display:none;}
+.gh .galleria .scatto{flex:none;scroll-snap-align:start;border-radius:6px;overflow:hidden;
+  height:clamp(170px,22vw,260px);aspect-ratio:3/2;background:#1d1a17;}
+.gh .galleria .scatto img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease,filter .5s ease;
+  filter:saturate(.92) brightness(.94);}
+.gh .galleria .scatto:hover img{transform:scale(1.03);filter:none;}
+
+.visore{border:0;padding:0;background:transparent;max-width:none;max-height:none;
+  width:100vw;height:100dvh;margin:0;}
+.visore::backdrop{background:rgba(10,9,8,.92);}
+.visore[open]{display:flex;align-items:center;justify-content:center;}
+.visore img{max-width:94vw;max-height:88dvh;object-fit:contain;border-radius:4px;display:block;}
+.visore .chiudi{position:fixed;top:calc(12px + env(safe-area-inset-top));right:14px;width:46px;height:46px;
+  border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:28px;line-height:1;cursor:pointer;}
+
+/* ---------- i ricordi: una voce sola, sottovoce ---------- */
+.ricordi{background:var(--notte);padding:clamp(56px,8vw,104px) var(--pad) 0;}
+.ricordi[hidden]{display:none;}
+.ricordi .dentro{max-width:40rem;margin:0 auto;text-align:center;}
+.gh .ricordo{margin:18px 0 0;transition:opacity .35s ease;}
+.gh .ricordo.via{opacity:0;}
+.gh .ricordo .testo{font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(19px,2.3vw,24px);line-height:1.5;color:var(--carta);margin:0;
+  font-variation-settings:'SOFT' 50;white-space:pre-line;}
+.gh .ricordo.lungo .testo{font-size:clamp(17px,1.9vw,20px);}
+.gh .ricordo .testo::before{content:"«\00a0";color:var(--ottone);}
+.gh .ricordo .testo::after{content:"\00a0»";color:var(--ottone);}
+.gh .ricordo .nome{margin-top:16px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--tenue);}
+.gh .ricordi .altro{margin-top:26px;background:none;border:0;padding:12px 4px;cursor:pointer;
+  font:inherit;font-size:14px;color:var(--tenue);border-bottom:1px solid rgba(255,255,255,.18);}
+.gh .ricordi .altro:hover{color:var(--testo);border-color:var(--ottone);}
+@media (max-width:760px){ .ricordi{padding-top:52px;} }
+@media (prefers-reduced-motion:reduce){ .gh .ricordo{transition:none;} }
+
 /* ---------- piede ---------- */
 .piede{padding:clamp(44px,7vw,84px) var(--pad) 42px;background:var(--notte);}
 .griglia{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}

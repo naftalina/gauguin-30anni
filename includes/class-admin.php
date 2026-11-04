@@ -162,6 +162,20 @@ class GX30_Admin {
                 </div>
                 <p><button type="button" class="button" id="gx30-gallery-add">+ Aggiungi foto</button></p>
 
+                <h2 class="title">Galleria della home</h2>
+                <p class="description">Striscia di foto da far scorrere nella nuova home, sopra la storia. Meglio foto <strong>orizzontali</strong>; trascinale per cambiare l'ordine. Vuota = striscia nascosta.</p>
+                <div id="gx30-homegallery">
+                    <?php $hg = GX30_Settings::get('home_gallery', []); if (!is_array($hg)) $hg = [];
+                    foreach ($hg as $img): ?>
+                        <div class="gx30-homegallery-item" draggable="true" style="display:inline-block;position:relative;margin:4px;vertical-align:top;cursor:move;">
+                            <img src="<?php echo esc_url($img); ?>" style="width:120px;height:80px;object-fit:cover;border-radius:6px;display:block;">
+                            <input type="hidden" name="home_gallery[]" value="<?php echo esc_attr($img); ?>">
+                            <button type="button" class="button gx30-homegallery-del" style="position:absolute;top:-8px;right:-8px;min-width:0;padding:0 7px;line-height:22px;border-radius:50%;">×</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p><button type="button" class="button" id="gx30-homegallery-add">+ Aggiungi foto dalla libreria</button></p>
+
                 <h2 class="title">Sezione “Ricordi”</h2>
                 <table class="form-table"><tbody>
                     <?php $this->field_text('mem_kicker', 'Etichetta'); ?>
@@ -421,6 +435,49 @@ class GX30_Admin {
                 }
             });
 
+            // Galleria della home: aggiungi dalla libreria, togli, riordina trascinando
+            var hg = document.getElementById('gx30-homegallery');
+            if (hg) {
+                document.getElementById('gx30-homegallery-add').addEventListener('click', function(){
+                    var frame = wp.media({title:'Foto per la home', multiple:true, library:{type:'image'}});
+                    frame.on('select', function(){
+                        frame.state().get('selection').each(function(att){
+                            var a = att.toJSON();
+                            var item = document.createElement('div');
+                            item.className = 'gx30-homegallery-item';
+                            item.draggable = true;
+                            item.style.cssText = 'display:inline-block;position:relative;margin:4px;vertical-align:top;cursor:move;';
+                            item.innerHTML = '<img src="'+a.url+'" style="width:120px;height:80px;object-fit:cover;border-radius:6px;display:block;">'+
+                                '<input type="hidden" name="home_gallery[]" value="'+a.url+'">'+
+                                '<button type="button" class="button gx30-homegallery-del" style="position:absolute;top:-8px;right:-8px;min-width:0;padding:0 7px;line-height:22px;border-radius:50%;">×</button>';
+                            hg.appendChild(item);
+                        });
+                    });
+                    frame.open();
+                });
+                hg.addEventListener('click', function(e){
+                    if (e.target.classList.contains('gx30-homegallery-del')) {
+                        e.target.closest('.gx30-homegallery-item').remove();
+                    }
+                });
+                var trascinata = null;
+                hg.addEventListener('dragstart', function(e){
+                    trascinata = e.target.closest('.gx30-homegallery-item');
+                    if (trascinata) trascinata.style.opacity = '.4';
+                });
+                hg.addEventListener('dragend', function(){
+                    if (trascinata) trascinata.style.opacity = '';
+                    trascinata = null;
+                });
+                hg.addEventListener('dragover', function(e){
+                    e.preventDefault();
+                    var sopra = e.target.closest('.gx30-homegallery-item');
+                    if (!trascinata || !sopra || sopra === trascinata) return;
+                    var r = sopra.getBoundingClientRect();
+                    hg.insertBefore(trascinata, (e.clientX - r.left) > r.width / 2 ? sopra.nextSibling : sopra);
+                });
+            }
+
             // --- TV: foto dedicate agli schermi -------------------------
             var tvg = document.getElementById('gx30-tvgallery');
             document.getElementById('gx30-tvgallery-add').addEventListener('click', function(){
@@ -587,6 +644,15 @@ class GX30_Admin {
             }
         }
         $out['tv_gallery'] = $tv_gallery;
+
+        $home_gallery = [];
+        if (isset($in['home_gallery']) && is_array($in['home_gallery'])) {
+            foreach ($in['home_gallery'] as $u) {
+                $u = esc_url_raw(trim((string) $u));
+                if ($u !== '') $home_gallery[] = $u;
+            }
+        }
+        $out['home_gallery'] = $home_gallery;
 
         $tv_claims = [];
         if (isset($in['tv_claims']) && is_array($in['tv_claims'])) {
