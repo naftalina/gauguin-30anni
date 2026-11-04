@@ -20,11 +20,14 @@
      della sera prima. La pagina e' in cache: il calcolo va fatto qui. */
   (function(){
     var box = document.getElementById('stato');
-    if (!box || CFG.open == null || CFG.close == null) return;
+    // wp_localize_script trasforma i numeri in testo ("1110", "30"): vanno riconvertiti,
+    // altrimenti "30" <= "1110" e falso (confronto tra parole) e dopo le 18:30 risultava chiuso.
+    var apre = parseInt(CFG.open, 10), chiude = parseInt(CFG.close, 10);
+    if (!box || isNaN(apre) || isNaN(chiude)) return;
     var parola = box.querySelector('.parola'), coda = box.querySelector('.coda');
     var giorni = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
-    var chiusi = Array.isArray(CFG.closed) ? CFG.closed : [];
-    var apre = CFG.open, chiude = CFG.close, oltre = chiude <= apre; // oltre: chiude dopo mezzanotte
+    var chiusi = Array.isArray(CFG.closed) ? CFG.closed.map(Number) : [];
+    var oltre = chiude <= apre; // oltre: chiude dopo mezzanotte
     var pad = function(n){ return (n < 10 ? '0' : '') + n; };
     var hhmm = function(m){ return pad(Math.floor(m/60)) + ':' + pad(m%60); };
     var isoGiorno = function(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); };
