@@ -46,10 +46,9 @@ class GX30_Settings {
             'gallery'        => [],
 
             // Striscia di foto della nuova home (URL dalla libreria Media).
-            // Default: 18 scatti del servizio fotografico 2024. Vuoto = nascosta.
+            // Default: 17 scatti del servizio fotografico 2024. Vuoto = nascosta.
             'home_gallery'   => [
                 'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-17-scaled.jpg',
-                'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-32-scaled.jpg',
                 'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-8-scaled.jpg',
                 'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-34-scaled.jpg',
                 'https://www.gauguin.it/wp-content/uploads/2024/06/Gaugen-105-scaled.jpg',
