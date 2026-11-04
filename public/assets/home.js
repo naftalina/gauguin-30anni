@@ -69,6 +69,51 @@
     }, {threshold:0}).observe(apertura);
   })();
 
+  /* Galleria: scorre piano da sola, come un nastro senza fine (le foto sono
+     duplicate una volta). Si ferma quando la tocchi o ci passi sopra col
+     mouse e riparte dopo qualche secondo; ferma del tutto con "riduci
+     movimento" e quando non e' sullo schermo. */
+  (function(){
+    var s = document.querySelector('.galleria .striscia');
+    if (!s) return;
+    var originali = Array.prototype.slice.call(s.children);
+    if (originali.length < 3) return;
+    originali.forEach(function(a){
+      var c = a.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true'); c.tabIndex = -1;
+      s.appendChild(c);
+    });
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var pos = 0, fermo = false, visibile = false, timer = null, ultimoT = 0;
+    var giro = function(){ return originali[originali.length - 1].nextElementSibling.offsetLeft - originali[0].offsetLeft; };
+    function passo(t){
+      var dt = ultimoT ? Math.min(t - ultimoT, 50) : 16; ultimoT = t;
+      if (!fermo && visibile) {
+        pos += dt * 0.022;                       // ~22 px al secondo
+        var g = giro();
+        if (g > 0 && pos >= g) pos -= g;
+        s.scrollLeft = pos;
+      }
+      requestAnimationFrame(passo);
+    }
+    function ferma(){ fermo = true; clearTimeout(timer); }
+    function riparti(ms){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ pos = s.scrollLeft; fermo = false; }, ms);
+    }
+    s.addEventListener('pointerdown', ferma);
+    s.addEventListener('touchstart', ferma, {passive:true});
+    s.addEventListener('wheel', function(){ ferma(); riparti(3000); }, {passive:true});
+    s.addEventListener('mouseenter', ferma);
+    s.addEventListener('mouseleave', function(){ riparti(800); });
+    s.addEventListener('touchend', function(){ riparti(3500); }, {passive:true});
+    s.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') riparti(3500); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(v){ visibile = v[0].isIntersecting; }, {threshold:0}).observe(s);
+    } else { visibile = true; }
+    requestAnimationFrame(passo);
+  })();
+
   /* Galleria: un tocco apre la foto grande; tocco ovunque o Esc per chiudere.
      Senza <dialog> (browser vecchi) il link apre semplicemente la foto. */
   (function(){
@@ -91,6 +136,7 @@
   (function(){
     var box = document.getElementById('ricordi');
     if (!box || !CFG.ricordo || !window.fetch) return;
+    box.hidden = false;   // il form c'e' anche quando non arriva nessun ricordo
     var q = box.querySelector('.ricordo'), testo = q.querySelector('.testo'),
         nome = q.querySelector('.nome'), btn = box.querySelector('.altro');
     var ultimo = '', occupato = false;
@@ -112,7 +158,7 @@
           testo.textContent = r.memory.trim();
           nome.textContent = r.name || '';
           q.classList.toggle('lungo', r.memory.length > 280);
-          box.hidden = false;
+          q.hidden = false; btn.hidden = false;
           q.classList.remove('via');
           occupato = false;
         }, primo ? 0 : 350);
@@ -120,6 +166,38 @@
     }
     btn.addEventListener('click', function(){ mostra(false); });
     mostra(true);
+
+    /* «Lascia il tuo ricordo»: form chiuso finche' non lo chiedi. Va in
+       moderazione come quello della vecchia landing (stesso endpoint).
+       Niente cookie ne' X-WP-Nonce: con un nonce WP risponde 403. */
+    var lascia = box.querySelector('.lascia'), form = box.querySelector('.form-ricordo');
+    if (!lascia || !form || !CFG.invia) { if (lascia) lascia.hidden = true; return; }
+    var esito = form.querySelector('.esito'), invia = form.querySelector('.invia');
+    lascia.addEventListener('click', function(){
+      var apri = form.hidden;
+      form.hidden = !apri;
+      lascia.setAttribute('aria-expanded', apri ? 'true' : 'false');
+      if (apri) form.querySelector('input[name="name"]').focus({preventScroll:false});
+    });
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var n = form.elements['name'].value.trim(), m = form.elements['memory'].value.trim();
+      if (!n || !m) { esito.textContent = 'Scrivi il tuo nome e il ricordo.'; return; }
+      invia.disabled = true; esito.textContent = 'Invio…';
+      fetch(CFG.invia, {
+        method:'POST', credentials:'omit',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({name:n, memory:m, website:form.elements['website'].value})
+      }).then(function(res){
+        if (!res.ok) throw new Error(res.status);
+        form.reset();
+        form.querySelectorAll('label,.invia,.nota').forEach(function(el){ el.hidden = true; });
+        esito.textContent = 'Grazie, ' + n + '! Il tuo ricordo è arrivato: lo pubblichiamo appena lo leggiamo.';
+      }).catch(function(){
+        invia.disabled = false;
+        esito.textContent = 'Non è partito, riprova tra poco.';
+      });
+    });
   })();
 
   /* Come arrivare: su iPhone, iPad e Mac conviene Apple Maps, che apre l'app;

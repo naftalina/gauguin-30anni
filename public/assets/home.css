@@ -133,19 +133,25 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
   text-shadow:0 1px 12px rgba(0,0,0,.6);}
 @media (min-width:900px){ .storia .didascalia{left:clamp(20px,3vw,40px);right:auto;} }
 
-/* ---------- galleria: una striscia da scorrere, niente mosaico ---------- */
-.galleria{background:var(--notte);padding:clamp(28px,4vw,48px) 0;position:relative;}
-.galleria .striscia{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding:0 var(--pad);scroll-padding:0 var(--pad);scrollbar-width:none;-webkit-overflow-scrolling:touch;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--pad),#000 calc(100% - var(--pad)),transparent 100%);
-          mask-image:linear-gradient(90deg,transparent 0,#000 var(--pad),#000 calc(100% - var(--pad)),transparent 100%);}
+/* ---------- galleria: foto a filo che sfumano una nell'altra ----------
+   Niente riquadri ne' bordi: la fascia nasce dal nero della brace e muore
+   nel bordeaux della storia, e scorre piano da sola (si ferma al tocco). */
+.galleria{position:relative;background:linear-gradient(180deg,var(--notte) 0%,var(--notte) 50%,var(--bordeaux) 100%);}
+.galleria::before,.galleria::after{content:"";position:absolute;left:0;right:0;z-index:2;pointer-events:none;height:30%;}
+.galleria::before{top:0;background:linear-gradient(180deg,var(--notte) 0%,rgba(18,16,14,0) 100%);}
+.galleria::after{bottom:0;background:linear-gradient(0deg,var(--bordeaux) 0%,rgba(158,21,42,0) 100%);}
+.galleria .striscia{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;cursor:grab;}
 .galleria .striscia::-webkit-scrollbar{display:none;}
-.gh .galleria .scatto{flex:none;scroll-snap-align:start;border-radius:6px;overflow:hidden;
-  height:clamp(170px,22vw,260px);aspect-ratio:3/2;background:#1d1a17;}
-.gh .galleria .scatto img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease,filter .5s ease;
-  filter:saturate(.92) brightness(.94);}
-.gh .galleria .scatto:hover img{transform:scale(1.03);filter:none;}
-
+.gh .galleria .scatto{flex:none;display:block;height:clamp(250px,42svh,460px);aspect-ratio:3/2;margin-right:-64px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%);}
+.gh .galleria .scatto img{width:100%;height:100%;object-fit:cover;filter:saturate(.95) brightness(.92);}
+@media (max-width:760px){
+  .gh .galleria .scatto{height:clamp(220px,36svh,320px);margin-right:-44px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%);}
+}
 .visore{border:0;padding:0;background:transparent;max-width:none;max-height:none;
   width:100vw;height:100dvh;margin:0;}
 .visore::backdrop{background:rgba(10,9,8,.92);}
@@ -168,9 +174,26 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
 .gh .ricordo .testo::after{content:"\00a0»";color:var(--ottone);}
 .gh .ricordo .nome{margin-top:16px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;
   color:var(--tenue);}
-.gh .ricordi .altro{margin-top:26px;background:none;border:0;padding:12px 4px;cursor:pointer;
-  font:inherit;font-size:14px;color:var(--tenue);border-bottom:1px solid rgba(255,255,255,.18);}
-.gh .ricordi .altro:hover{color:var(--testo);border-color:var(--ottone);}
+.ricordi .azioni-ricordi{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 26px;}
+.gh .ricordi .altro,.gh .ricordi .lascia{margin:0;background:none;border:0;padding:12px 4px;cursor:pointer;
+  font:inherit;font-size:14.5px;color:var(--tenue);border-bottom:1px solid rgba(255,255,255,.18);border-radius:0;}
+.gh .ricordi .lascia{color:var(--ottone);border-color:rgba(217,164,65,.45);}
+.gh .ricordi .altro:hover,.gh .ricordi .lascia:hover{color:var(--testo);border-color:var(--ottone);}
+.gh .form-ricordo{margin:26px auto 0;max-width:30rem;text-align:left;display:grid;gap:14px;}
+.gh .form-ricordo[hidden],.gh .form-ricordo [hidden],.gh .ricordi [hidden]{display:none;}
+.gh .form-ricordo label{display:grid;gap:6px;font-size:13px;letter-spacing:.06em;color:var(--tenue);}
+.gh .form-ricordo input,.gh .form-ricordo textarea{width:100%;font:inherit;font-size:16px;line-height:1.5;
+  color:var(--testo);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);
+  border-radius:10px;padding:12px 14px;margin:0;}
+.gh .form-ricordo textarea{resize:vertical;min-height:120px;}
+.gh .form-ricordo input:focus,.gh .form-ricordo textarea:focus{outline:none;border-color:var(--ottone);}
+.gh .form-ricordo .trappola{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+.gh .form-ricordo .invia{justify-self:center;min-height:50px;padding:0 30px;border:0;border-radius:999px;
+  background:var(--bordeaux);color:#fff;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;}
+.gh .form-ricordo .invia[disabled]{opacity:.6;cursor:default;}
+.gh .form-ricordo .nota{margin:0;font-size:12.5px;color:var(--tenue);text-align:center;}
+.gh .form-ricordo .esito{margin:0;font-size:15px;text-align:center;color:var(--carta);}
+.gh .form-ricordo .esito:empty{display:none;}
 @media (max-width:760px){ .ricordi{padding-top:52px;} }
 @media (prefers-reduced-motion:reduce){ .gh .ricordo{transition:none;} }
 

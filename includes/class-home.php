@@ -130,6 +130,7 @@ class GX30_Home {
             'lat'     => trim((string) GX30_Settings::get('schema_lat')),
             'lng'     => trim((string) GX30_Settings::get('schema_lng')),
             'ricordo' => esc_url_raw(rest_url('gauguin30/v1/ricordo-casuale')),
+            'invia'   => esc_url_raw(rest_url('gauguin30/v1/ricordi')),
         ];
     }
 
@@ -317,11 +318,22 @@ class GX30_Home {
 <section class="ricordi" id="ricordi" hidden>
   <div class="dentro">
     <p class="occhiello">Chi ci è passato</p>
-    <blockquote class="ricordo" aria-live="polite">
+    <blockquote class="ricordo" aria-live="polite" hidden>
       <p class="testo"></p>
       <footer class="nome"></footer>
     </blockquote>
-    <button type="button" class="altro">Un altro ricordo</button>
+    <div class="azioni-ricordi">
+      <button type="button" class="altro" hidden>Un altro ricordo</button>
+      <button type="button" class="lascia" aria-expanded="false" aria-controls="formRicordo">Lascia il tuo ricordo</button>
+    </div>
+    <form class="form-ricordo" id="formRicordo" hidden novalidate>
+      <label>Il tuo nome<input name="name" maxlength="80" autocomplete="given-name" required></label>
+      <label>Un ricordo, una serata, una persona<textarea name="memory" maxlength="500" rows="4" required></textarea></label>
+      <input class="trappola" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" class="invia">Invia il ricordo</button>
+      <p class="nota">Lo leggiamo noi prima di pubblicarlo.</p>
+      <p class="esito" role="status"></p>
+    </form>
   </div>
 </section>
 
