@@ -34,6 +34,7 @@
     var aFerie = function(iso){ return !!CFG.vacFrom && iso >= CFG.vacFrom && iso <= CFG.vacTo; };
     var chiusoIl = function(d){ return chiusi.indexOf(d.getDay()) !== -1 || aFerie(isoGiorno(d)); };
 
+    // Su telefono la .coda e' nascosta: la .parola deve bastare da sola.
     function aggiorna(){
       var ora = new Date(), m = ora.getHours()*60 + ora.getMinutes();
       var sera = new Date(ora);
@@ -42,19 +43,18 @@
       var aperto = dentro && !chiusoIl(sera);
       box.classList.toggle('chiuso', !aperto);
       if (aperto) {
-        parola.textContent = 'Aperto ora';
+        parola.textContent = 'Aperti ora';
         coda.textContent = ' · fino alle ' + hhmm(chiude);
+      } else if (m < apre && !chiusoIl(ora)) {
+        parola.textContent = 'Apriamo alle ' + hhmm(apre);
+        coda.textContent = '';
       } else {
-        parola.textContent = 'Chiuso adesso';
-        if (m < apre && !chiusoIl(ora)) {
-          coda.textContent = ' · apre oggi alle ' + hhmm(apre);
-        } else {
-          var d = 1, g = new Date(ora);
-          g.setDate(g.getDate() + 1);
-          while (chiusoIl(g) && d < 30) { g.setDate(g.getDate() + 1); d++; }
-          var quando = d === 1 ? 'domani' : (d < 7 ? giorni[g.getDay()] : 'il ' + g.getDate() + '/' + (g.getMonth()+1));
-          coda.textContent = ' · apre ' + quando + ' alle ' + hhmm(apre);
-        }
+        var d = 1, g = new Date(ora);
+        g.setDate(g.getDate() + 1);
+        while (chiusoIl(g) && d < 30) { g.setDate(g.getDate() + 1); d++; }
+        var quando = d === 1 ? 'domani' : (d < 7 ? giorni[g.getDay()] : 'il ' + g.getDate() + '/' + (g.getMonth()+1));
+        parola.textContent = aFerie(isoGiorno(ora)) ? 'Chiusi per ferie' : (chiusoIl(ora) ? 'Oggi chiusi' : 'Riapriamo ' + quando);
+        coda.textContent = chiusoIl(ora) ? ' · riapriamo ' + quando + ' alle ' + hhmm(apre) : ' · alle ' + hhmm(apre);
       }
       box.hidden = false;
     }
