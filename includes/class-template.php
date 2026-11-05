@@ -62,6 +62,11 @@ class GX30_Template {
             GX30_Home::instance()->render();
             exit;
         }
+        // Privacy & cookie nello stile della home, non del tema.
+        if (GX30_Privacy::should_render()) {
+            GX30_Privacy::instance()->render();
+            exit;
+        }
         if (!$this->page_uses_template()) {
             return $template;
         }

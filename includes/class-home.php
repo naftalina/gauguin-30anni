@@ -134,7 +134,7 @@ class GX30_Home {
         ];
     }
 
-    private static function img($file) {
+    public static function img($file) {
         return GX30_URL . 'public/assets/home/' . $file;
     }
 
@@ -337,6 +337,35 @@ class GX30_Home {
   </div>
 </section>
 
+<?php self::footer(); ?>
+
+<nav class="barra-basso" id="barraBasso" aria-label="Azioni rapide">
+  <a class="b-pieno" href="#gauguin-order"><?php echo $ico_ordina; ?> Ordina</a>
+  <a class="b-vuoto" href="#gauguin-reservation"><?php echo $ico_prenota; ?> Prenota</a>
+</nav>
+
+</div>
+        <?php
+    }
+    /** Piede del sito, uguale su home e pagine interne (es. privacy). */
+    public static function footer() {
+        $s = function ($k, $fb = '') { return GX30_Settings::get($k, $fb); };
+        $phone  = (string) $s('footer_phone');
+        $tel    = GX30_Settings::footer_phone_tel();
+        $place  = (string) $s('footer_address');
+        $lat    = trim((string) $s('schema_lat'));
+        $lng    = trim((string) $s('schema_lng'));
+        $maps   = ($lat !== '' && $lng !== '')
+            ? 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($lat . ',' . $lng)
+            : (string) $s('footer_maps_url');
+        $open   = trim((string) $s('schema_open'));
+        $close  = trim((string) $s('schema_close'));
+        $hours  = ($open !== '' && $close !== '') ? $open . ' – ' . $close : '';
+        $days   = GX30_Settings::auto_hours(true);
+        $fb     = (string) $s('social_facebook');
+        $ig     = (string) $s('social_instagram');
+        $wa     = (string) $s('social_whatsapp');
+        ?>
 <footer class="piede">
   <div class="griglia">
     <div><h4>Dove</h4><p><?php echo esc_html($place); ?><?php if ($maps): ?><br><a class="mappa" href="<?php echo esc_url($maps); ?>" target="_blank" rel="noopener">Come arrivare</a><?php endif; ?></p></div>
@@ -354,13 +383,6 @@ class GX30_Home {
   </div>
   <p class="coda-piede">Gauguin · Pizzeria Birreria · Alba Adriatica · gauguin.it · <a href="<?php echo esc_url(home_url('/privacy-cookie-policy/')); ?>">Privacy &amp; cookie</a></p>
 </footer>
-
-<nav class="barra-basso" id="barraBasso" aria-label="Azioni rapide">
-  <a class="b-pieno" href="#gauguin-order"><?php echo $ico_ordina; ?> Ordina</a>
-  <a class="b-vuoto" href="#gauguin-reservation"><?php echo $ico_prenota; ?> Prenota</a>
-</nav>
-
-</div>
         <?php
     }
 }
