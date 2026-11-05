@@ -159,7 +159,7 @@ class GX30_Privacy {
     <p>Il sito non usa cookie di profilazione né strumenti di statistica o pubblicità: <strong>niente Google Analytics, niente pixel di Facebook</strong>. Anche i caratteri tipografici sono sul nostro server, non su quelli di Google.</p>
     <div class="legale-tabella" role="table" aria-label="Cookie usati dal sito">
       <div class="riga testa" role="row"><span role="columnheader">Cookie</span><span role="columnheader">A cosa serve</span><span role="columnheader">Durata</span></div>
-      <div class="riga" role="row"><span role="cell"><code>gauguin_consent</code></span><span role="cell">Ricorda la tua scelta sul banner dei cookie.</span><span role="cell">6 mesi</span></div>
+      <div class="riga" role="row"><span role="cell"><code>gauguin_consent</code></span><span role="cell">Ricorda che hai chiuso l'avviso sui cookie, così non riappare.</span><span role="cell">6 mesi</span></div>
       <div class="riga" role="row"><span role="cell"><code>__stripe_mid</code>, <code>__stripe_sid</code></span><span role="cell">Sicurezza e prevenzione delle frodi, solo quando paghi online.</span><span role="cell">1 anno / 30 minuti</span></div>
       <div class="riga" role="row"><span role="cell"><code>wordpress_*</code></span><span role="cell">Accesso all'area riservata, solo per il personale.</span><span role="cell">Fino all'uscita</span></div>
     </div>

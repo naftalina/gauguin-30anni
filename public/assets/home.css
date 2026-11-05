@@ -273,8 +273,8 @@ body.gh-body{margin:0;background:var(--notte);overflow-x:hidden;-webkit-text-siz
 .legale-testa{padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.09);}
 .gh .legale h1{font-size:clamp(38px,6vw,64px);color:#fff;}
 .gh .legale h1 em{font-style:italic;color:var(--ottone);font-variation-settings:'SOFT' 60,'WONK' 1;}
-.legale-intro{font-size:clamp(16.5px,1.7vw,19px);color:#DCD2C7;margin:20px 0 0;max-width:56ch;}
-.legale-data{font-size:13px;color:var(--tenue);margin:16px 0 0;}
+.legale .legale-intro{font-size:clamp(16.5px,1.7vw,19px);color:#DCD2C7;margin:20px 0 0;max-width:56ch;}
+.legale .legale-data{font-size:13px;color:var(--tenue);margin:16px 0 0;}
 .legale-indice{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 8px;}
 .gh .legale-indice a{font-size:13.5px;padding:8px 14px;border-radius:999px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);transition:border-color .18s;}
