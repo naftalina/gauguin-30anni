@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) exit;
 class GX30_Privacy {
 
     const SLUG    = 'privacy-cookie-policy';
-    const UPDATED = '5 novembre 2026'; // data fissa: cambiarla solo quando cambia il testo
+    const UPDATED = '9 novembre 2026'; // data fissa: cambiarla solo quando cambia il testo
 
     private static $instance = null;
 
@@ -37,7 +37,7 @@ class GX30_Privacy {
 
     public function render() {
         $title = 'Privacy e cookie - Pizzeria Birreria Gauguin';
-        $desc  = 'Come la Pizzeria Birreria Gauguin tratta i dati di chi ordina, prenota o lascia un ricordo sul sito, e quali cookie usa.';
+        $desc  = 'Come la Pizzeria Birreria Gauguin tratta i dati di chi ordina, prenota, lascia un ricordo o risponde al sondaggio sul sito, e quali cookie usa.';
         $t = function () use ($title) { return $title; };
         $d = function () use ($desc) { return $desc; };
         add_filter('pre_get_document_title', $t, 99);
@@ -85,7 +85,7 @@ class GX30_Privacy {
   <header class="legale-testa">
     <p class="occhiello">Informativa</p>
     <h1>Privacy <em>e cookie</em></h1>
-    <p class="legale-intro">Quali dati ci lasci quando ordini, prenoti o ci racconti un ricordo, cosa ne facciamo e per quanto li teniamo. In breve: solo quello che serve, niente pubblicità, niente statistiche di terzi.</p>
+    <p class="legale-intro">Quali dati ci lasci quando ordini, prenoti, ci racconti un ricordo o rispondi al nostro sondaggio, cosa ne facciamo e per quanto li teniamo. In breve: solo quello che serve, niente pubblicità, niente statistiche di terzi.</p>
     <p class="legale-data">Aggiornata il <?php echo esc_html(self::UPDATED); ?></p>
   </header>
 
@@ -141,6 +141,15 @@ class GX30_Privacy {
           <dt>Per quanto</dt><dd>Finché non ci chiedi di toglierli: basta una mail.</dd>
         </dl>
       </div>
+      <div class="voce" id="sondaggio">
+        <h3>Il sondaggio «E adesso?»</h3>
+        <p>Le risposte alle tre domande e, solo se scegli di lasciarli, nome, email, telefono e le righe che ci scrivi su di te. Insieme alla risposta registriamo l'indirizzo IP da cui arriva.</p>
+        <dl>
+          <dt>Perché</dt><dd>Capire dove portare il Gauguin e ricontattarti su questo progetto, solo se ce lo hai chiesto. L'IP serve soltanto a bloccare gli invii automatici e ripetuti.</dd>
+          <dt>Base giuridica</dt><dd>Il tuo consenso (art. 6.1.a GDPR), che puoi ritirare quando vuoi; per l'IP, il nostro interesse a proteggere il sito dallo spam (art. 6.1.f GDPR).</dd>
+          <dt>Per quanto</dt><dd>Al massimo 2 anni, poi le risposte si cancellano da sole. Se vuoi toglierle prima, basta una mail.</dd>
+        </dl>
+      </div>
       <div class="voce">
         <h3>Se ci scrivi o ci chiami</h3>
         <p>Usiamo i tuoi recapiti solo per risponderti. Le email di conferma e di avviso che ricevi riguardano solo il tuo ordine o la tua prenotazione: <strong>niente newsletter, niente pubblicità</strong>.</p>
@@ -163,7 +172,7 @@ class GX30_Privacy {
       <div class="riga" role="row"><span role="cell"><code>__stripe_mid</code>, <code>__stripe_sid</code></span><span role="cell">Sicurezza e prevenzione delle frodi, solo quando paghi online.</span><span role="cell">1 anno / 30 minuti</span></div>
       <div class="riga" role="row"><span role="cell"><code>wordpress_*</code></span><span role="cell">Accesso all'area riservata, solo per il personale.</span><span role="cell">Fino all'uscita</span></div>
     </div>
-    <p>Il sito salva anche qualche piccola informazione nella memoria del tuo browser, per esempio i ricordi che hai già mandato. Resta sul tuo telefono o computer e non ci viene inviata. Puoi cancellare tutto dalle impostazioni del browser.</p>
+    <p>Il sito salva anche qualche piccola informazione nella memoria del tuo browser, per esempio i ricordi che hai già mandato o il fatto che hai chiuso la striscia in cima alla home. Resta sul tuo telefono o computer e non ci viene inviata. Puoi cancellare tutto dalle impostazioni del browser.</p>
   </section>
 
   <section id="diritti">
