@@ -89,6 +89,7 @@ class GX30_Home {
     <?php wp_head(); ?>
 </head>
 <body <?php body_class('gh-body'); ?>>
+<?php if (function_exists('wp_body_open')) wp_body_open(); // hook standard: la striscia del sondaggio (plugin ordini) entra qui ?>
 <?php $this->render_body(); ?>
 <?php wp_footer(); ?>
 </body>
